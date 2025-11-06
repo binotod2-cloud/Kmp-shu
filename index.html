@@ -1,563 +1,306 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KMP Pasirgombong v1.9 - FINAL & STABIL</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-  body { font-family: Arial, sans-serif; margin:20px; background:#f5f7fb; color:#222; line-height:1.5; }
-  h2,h3,h4 { margin:12px 0; color:#1a73e8; }
-  .container { max-width:1400px; margin:auto; }
-  nav { margin-bottom:20px; }
-  nav button { margin:4px; padding:10px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer; font-size:14px; }
-  nav button:hover { background:#45a049; }
-  .row, .row3 { display:flex; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
-  .row div, .row3 div { flex:1; min-width:140px; display:flex; flex-direction:column; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; background:white; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-  table, th, td { border:1px solid #ddd; }
-  th { background:#4CAF50; color:white; padding:10px; text-align:center; font-weight:600; }
-  td { padding:8px; text-align:center; }
-  input, select { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; font-size:14px; }
-  button { cursor:pointer; padding:8px 16px; border:none; border-radius:5px; font-size:14px; }
-  .btn-success { background:#4CAF50; color:white; }
-  .btn-success:hover { background:#45a049; }
-  .btn-danger { background:#f44336; color:white; }
-  .btn-danger:hover { background:#da190b; }
-  .btn-info { background:#2196F3; color:white; }
-  .btn-info:hover { background:#0b7dda; }
-  .btn-warning { background:#ff9800; color:white; }
-  .btn-warning:hover { background:#e68a00; }
-  #previewArea { background:#fff8e1; padding:12px; border-radius:5px; border:1px solid #ffca28; font-size:13px; }
-  .info-box { background:#e3f2fd; padding:12px; border-radius:5px; margin:12px 0; border-left:4px solid #2196F3; font-size:14px; }
-  .toggle-btn { background:#ff9800; color:white; font-size:12px; padding:6px 10px; }
-  .hidden { display:none; }
-  .muted { color:#666; font-style:italic; font-size:13px; }
-  .small { font-size:12px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KMP Pasirgombong</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family: 'Segoe UI', sans-serif; background:#f4f6f9; color:#333; padding:20px; }
+    .container { max-width:1200px; margin:auto; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; }
+    header { background:#1a73e8; color:white; padding:20px; text-align:center; }
+    nav { display:flex; flex-wrap:wrap; gap:8px; padding:15px; background:#f1f3f5; border-bottom:1px solid #ddd; }
+    nav button { padding:10px 16px; border:none; border-radius:6px; background:#4CAF50; color:white; font-weight:600; cursor:pointer; }
+    nav button:hover { background:#45a049; }
+    nav button.active { background:#1a73e8; }
+    .tab { padding:20px; display:none; }
+    .tab.active { display:block; }
+    .row { display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap; }
+    .row > div { flex:1; min-width:180px; }
+    label { display:block; margin-bottom:5px; font-weight:600; color:#555; }
+    input, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+    button { padding:10px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .btn { background:#2196F3; color:white; }
+    .btn:hover { background:#0b7dda; }
+    .btn-success { background:#4CAF50; color:white; }
+    .btn-danger { background:#f44336; color:white; }
+    table { width:100%; border-collapse:collapse; margin-top:15px; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
+    th { background:#1a73e8; color:white; }
+    .info { background:#e3f2fd; padding:12px; border-radius:6px; margin:15px 0; border-left:4px solid #2196F3; font-size:14px; }
+    .hidden { display:none; }
+    .toggle { font-size:12px; background:#ff9800; color:white; padding:5px 10px; }
+    .preview { background:#fff8e1; padding:12px; border-radius:6px; border:1px solid #ffca28; font-size:13px; margin-top:10px; }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h2>KMP Pasirgombong v1.9</h2>
-  <nav>
-    <button onclick="showTab('anggota')">Data Anggota</button>
-    <button onclick="showTab('transaksi')">Simpanan & Riwayat</button>
-    <button onclick="showTab('shu')">Kalkulasi SHU</button>
-    <button onclick="exportToExcel()" class="btn-info">Export Excel</button>
-    <button onclick="clearLocalStorage()" style="background:#f44336;">Hapus Data</button>
-  </nav>
+  <div class="container">
+    <header><h1>KMP Pasirgombong v2.0</h1></header>
+    <nav>
+      <button onclick="openTab('anggota')" class="active">Anggota</button>
+      <button onclick="openTab('transaksi')">Transaksi</button>
+      <button onclick="openTab('shu')">SHU</button>
+      <button onclick="exportAll()" class="btn">Export Excel</button>
+      <button onclick="hapusSemua()" style="background:#f44336;">Hapus Data</button>
+    </nav>
 
-  <!-- TAB ANGGOTA -->
-  <div id="tab-anggota">
-    <h3>Tambah Anggota</h3>
-    <div class="row">
-      <div><label>Tanggal Daftar</label><input type="date" id="daftarTanggal"></div>
-      <div><label>ID (Kosongkan = Auto)</label><input type="text" id="daftarId" placeholder="A001"></div>
-    </div>
-    <div class="row">
-      <div><label>Nama Lengkap</label><input type="text" id="daftarNama" placeholder="Wajib"></div>
-      <div><label>Simpanan Pokok</label><input type="number" id="daftarPokok" value="100000" min="1000" step="1000"></div>
-    </div>
-    <div class="row">
-      <div><label>Simpanan Wajib</label><input type="number" id="daftarWajib" value="50000" min="1000" step="1000"></div>
-      <div><label>Simpanan Sukarela</label><input type="number" id="daftarSukarela" value="0" min="0" step="1000"></div>
-    </div>
-    <div>
-      <button class="btn-success" onclick="tambahAnggota()">Tambah Anggota</button>
-      <input type="file" id="importExcel" accept=".xlsx,.xls" style="display:none">
-      <button onclick="document.getElementById('importExcel').click()" class="btn-info">Import Excel</button>
-      <span class="muted">* Pokok & Wajib minimal Rp 1.000</span>
-    </div>
-
-    <h3 style="margin-top:25px;">Daftar Anggota</h3>
-    <table id="tableAnggota">
-      <thead>
-        <tr>
-          <th>Tanggal</th><th>ID</th><th>Nama</th>
-          <th>Pokok</th><th>Wajib</th><th>Sukarela</th><th>SHU</th><th>Total</th><th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- TAB TRANSAKSI -->
-  <div id="tab-transaksi" style="display:none">
-    <h3>Transaksi</h3>
-    <div class="info-box">
-      Bunga 0.5% per bulan (otomatis). Gunakan tombol bunga untuk update massal.
-    </div>
-
-    <div class="row3">
-      <div><label>Anggota</label>
-        <select id="selAnggota" onchange="updatePreview()">
-          <option value="">-- Pilih --</option>
-        </select>
+    <!-- ANGGOTA -->
+    <div id="anggota" class="tab active">
+      <h3>Tambah Anggota</h3>
+      <div class="row">
+        <div><label>Tanggal</label><input type="date" id="tglDaftar"></div>
+        <div><label>ID (Kosongkan = Auto)</label><input type="text" id="idAnggota" placeholder="A001"></div>
       </div>
-      <div><label>Tanggal</label><input type="date" id="trxTanggal"></div>
-      <div><label>Bunga (%)</label><input type="number" value="0.5" step="0.01" min="0" readonly></div>
-    </div>
-
-    <div class="row3">
-      <div><label>+ Wajib</label><input type="number" id="tw" value="0" min="0" step="1000"></div>
-      <div><label>+ Sukarela</label><input type="number" id="ts" value="0" min="0" step="1000"></div>
-      <div><label>Belanja</label><input type="number" id="bel" value="0" min="0" step="1000"></div>
-    </div>
-
-    <div>
-      <button class="btn-success" onclick="proses()">Proses</button>
-      <button class="btn-info" onclick="updateAll()">Lihat Semua</button>
-      <button class="btn-success" onclick="bunga1()">Bunga 1 Bulan</button>
-      <button class="btn-success" onclick="bungaCustom()">Bunga Custom</button>
-      <input type="number" id="bln" value="12" min="1" style="width:70px;margin-left:5px;">
-    </div>
-
-    <h4 style="margin-top:20px;">
-      Preview
-      <button class="toggle-btn" onclick="toggle('previewArea')">Hide</button>
-    </h4>
-    <div id="previewArea" class="small">Pilih anggota...</div>
-
-    <h4 style="margin-top:20px;">
-      Riwayat
-      <button class="toggle-btn" onclick="toggle('tableTransaksi')">Hide</button>
-    </h4>
-    <table id="tableTransaksi" class="hidden">
-      <thead>
-        <tr>
-          <th>Tanggal</th><th>ID</th><th>Nama</th>
-          <th>+Wajib</th><th>+Sukarela</th><th>Bunga</th><th>Sukarela</th><th>Belanja</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- TAB SHU -->
-  <div id="tab-shu" style="display:none">
-    <h3>Kalkulasi SHU</h3>
-    <div class="info-box">
-      SHU dibagi: Modal (pokok+wajib), Belanja, dan pos lain.
-    </div>
-
-    <div class="row3">
-      <div><label>Periode</label>
-        <select id="periode" onchange="gantiPeriode()">
-          <option value="bulanan">Bulanan</option>
-          <option value="tahunan">Tahunan</option>
-        </select>
+      <div class="row">
+        <div><label>Nama</label><input type="text" id="namaAnggota"></div>
+        <div><label>Pokok (min 1.000)</label><input type="number" id="pokok" value="100000" min="1000"></div>
       </div>
-      <div><label>Bulan/Tahun</label><input type="month" id="bulan"></div>
-      <div><label>Total SHU</label><input type="number" id="profit" value="10000000" min="0" step="100000"></div>
+      <div class="row">
+        <div><label>Wajib (min 1.000)</label><input type="number" id="wajib" value="50000" min="1000"></div>
+        <div><label>Sukarela</label><input type="number" id="sukarela" value="0" min="0"></div>
+      </div>
+      <button class="btn-success" onclick="tambah()">Tambah</button>
+      <input type="file" id="importFile" accept=".xlsx" style="display:none">
+      <button onclick="document.getElementById('importFile').click()" class="btn">Import Excel</button>
+
+      <h3 style="margin-top:25px">Daftar Anggota</h3>
+      <table id="tabelAnggota">
+        <thead><tr><th>Tanggal</th><th>ID</th><th>Nama</th><th>Pokok</th><th>Wajib</th><th>Sukarela</th><th>SHU</th><th>Total</th><th>Aksi</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <h4>Persentase (%)</h4>
-    <div class="row3">
-      <div><label>Modal</label><input type="number" id="pModal" value="40" step="0.1"></div>
-      <div><label>Belanja</label><input type="number" id="pBelanja" value="5" step="0.1"></div>
-      <div><label>Cadangan</label><input type="number" id="pCadangan" value="20" step="0.1"></div>
-    </div>
-    <div class="row3">
-      <div><label>Pengurus</label><input type="number" id="pPengurus" value="5" step="0.1"></div>
-      <div><label>Pengawas</label><input type="number" id="pPengawas" value="5" step="0.1"></div>
-      <div><label>Karyawan</label><input type="number" id="pKaryawan" value="5" step="0.1"></div>
-    </div>
-    <div class="row3">
-      <div><label>Sosial</label><input type="number" id="pSosial" value="5" step="0.1"></div>
-      <div><label>Pendidikan</label><input type="number" id="pPendidikan" value="5" step="0.1"></div>
-      <div><label>Dana Bangun</label><input type="number" id="pDanaBangun" value="10" step="0.1"></div>
+    <!-- TRANSAKSI -->
+    <div id="transaksi" class="tab">
+      <h3>Transaksi</h3>
+      <div class="info">Bunga 0.5% otomatis tiap transaksi. Gunakan tombol bunga untuk massal.</div>
+      <div class="row">
+        <div><label>Anggota</label><select id="pilihAnggota"><option value="">-- Pilih --</option></select></div>
+        <div><label>Tanggal</label><input type="date" id="tglTrx"></div>
+      </div>
+      <div class="row">
+        <div><label>+ Wajib</label><input type="number" id="addWajib" value="0"></div>
+        <div><label>+ Sukarela</label><input type="number" id="addSukarela" value="0"></div>
+        <div><label>Belanja</label><input type="number" id="belanja" value="0"></div>
+      </div>
+      <button class="btn-success" onclick="prosesTrx()">Proses</button>
+      <button class="btn" onclick="lihatSemua()">Lihat Semua</button>
+      <button class="btn-success" onclick="bunga1Bulan()">Bunga 1 Bulan</button>
+
+      <div class="preview" id="preview">Pilih anggota...</div>
+
+      <h4 style="margin-top:20px">Riwayat <button class="toggle" onclick="toggle('riwayat')">Hide</button></h4>
+      <table id="riwayat" class="hidden">
+        <thead><tr><th>Tanggal</th><th>ID</th><th>Nama</th><th>+Wajib</th><th>+Sukarela</th><th>Bunga</th><th>Sukarela</th><th>Belanja</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <div>
-      <button class="btn-success" onclick="hitung()">Hitung SHU</button>
-      <span class="muted" id="totalP"></span>
-    </div>
-
-    <h4 style="margin-top:20px;">SHU per Anggota</h4>
-    <table id="tSHU">
-      <thead>
-        <tr>
-          <th>ID</th><th>Nama</th><th>Modal</th><th>Belanja</th>
-          <th>SHU Modal</th><th>SHU Belanja</th><th>Total</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <h4 style="margin-top:20px;">Pos Lain</h4>
-    <table id="tPos">
-      <thead><tr><th>Pos</th><th>%</th><th>Nominal</th></tr></thead>
-      <tbody></tbody>
-    </table>
-
-    <div style="margin-top:15px;">
-      <button class="btn-success" onclick="exportSHU()">Export SHU</button>
+    <!-- SHU -->
+    <div id="shu" class="tab">
+      <h3>Hitung SHU</h3>
+      <div class="row">
+        <div><label>Total SHU</label><input type="number" id="totalSHU" value="10000000"></div>
+      </div>
+      <button class="btn-success" onclick="hitungSHU()">Hitung</button>
+      <table id="tabelSHU" style="margin-top:15px">
+        <thead><tr><th>ID</th><th>Nama</th><th>Modal</th><th>Belanja</th><th>SHU Modal</th><th>SHU Belanja</th><th>Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
-</div>
 
-<script>
-// DATA
-let anggota = [];
-let transaksi = [];
-const KEY = 'kmp_v19';
+  <script>
+    let data = [], trx = [];
+    const KEY = 'kmp_data_v2';
 
-// STORAGE
-function simpan() {
-  localStorage.setItem(KEY, JSON.stringify({anggota, transaksi}));
-}
-function muat() {
-  const d = localStorage.getItem(KEY);
-  if (d) {
-    const o = JSON.parse(d);
-    anggota = o.anggota || [];
-    transaksi = o.transaksi || [];
-    return true;
-  }
-  return false;
-}
-function hapusData() {
-  if (confirm('Hapus SEMUA data?')) {
-    localStorage.removeItem(KEY);
-    location.reload();
-  }
-}
-
-// INIT
-window.onload = () => {
-  const t = new Date().toISOString().split('T')[0];
-  document.getElementById('daftarTanggal').value = t;
-  document.getElementById('trxTanggal').value = t;
-  document.getElementById('bulan').value = t.slice(0,7);
-  muat();
-  renderA();
-  updateSel();
-  renderT();
-};
-
-// UTILS
-function show(t) {
-  ['anggota','transaksi','shu'].forEach(x => {
-    document.getElementById('tab-'+x).style.display = x===t ? 'block' : 'none';
-  });
-}
-function fmt(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
-function toggle(id) { document.getElementById(id).classList.toggle('hidden'); }
-
-// ANGGOTA
-function tambahAnggota() {
-  const tgl = document.getElementById('daftarTanggal').value;
-  let id = document.getElementById('daftarId').value.trim();
-  const nama = document.getElementById('daftarNama').value.trim();
-  const pokok = +document.getElementById('daftarPokok').value || 0;
-  const wajib = +document.getElementById('daftarWajib').value || 0;
-  const sukarela = +document.getElementById('daftarSukarela').value || 0;
-
-  if (!tgl || !nama || pokok < 1000 || wajib < 1000) return alert('Isi lengkap! Pokok & Wajib min 1.000');
-  if (!id) id = 'A' + String(anggota.length + 1).padStart(3, '0');
-  if (anggota.some(a => a.id === id)) return alert('ID sudah ada!');
-
-  const a = {tgl, id, nama, pokok, wajib, sukarela, shu:0};
-  a.total = pokok + wajib + sukarela;
-  anggota.push(a);
-  transaksi.push({tgl, id, nama, tambahWajib:wajib, tambahSukarela:sukarela, bunga:0, sukarelaSetelah:sukarela, belanja:0, ket:'Pendaftaran'});
-
-  kosongkanForm();
-  renderA(); updateSel(); renderT(); simpan();
-  alert('Anggota ditambah!');
-}
-function kosongkanForm() {
-  document.getElementById('daftarId').value = '';
-  document.getElementById('daftarNama').value = '';
-  document.getElementById('daftarPokok').value = '100000';
-  document.getElementById('daftarWajib').value = '50000';
-  document.getElementById('daftarSukarela').value = '0';
-}
-function renderA() {
-  const tb = document.querySelector('#tableAnggota tbody');
-  tb.innerHTML = '';
-  anggota.forEach((a,i) => {
-    tb.innerHTML += `<tr>
-      <td ondblclick="edit(${i},'tgl',this)">${a.tgl}</td>
-      <td>${a.id}</td>
-      <td ondblclick="edit(${i},'nama',this)">${a.nama}</td>
-      <td ondblclick="edit(${i},'pokok',this)">${fmt(a.pokok)}</td>
-      <td ondblclick="edit(${i},'wajib',this)">${fmt(a.wajib)}</td>
-      <td ondblclick="edit(${i},'sukarela',this)">${fmt(a.sukarela)}</td>
-      <td ondblclick="edit(${i},'shu',this)">${fmt(a.shu)}</td>
-      <td><strong>${fmt(a.total + a.shu)}</strong></td>
-      <td>
-        <button class="btn-success" onclick="simpanEdit(${i})">Simpan</button>
-        <button class="btn-danger" onclick="hapusA(${i})">Hapus</button>
-      </td>
-    </tr>`;
-  });
-}
-function edit(i,f,cell) {
-  const a = anggota[i];
-  const v = a[f];
-  const t = f==='tgl'?'date':f==='nama'?'text':'number';
-  cell.innerHTML = `<input type="${t}" value="${v}" id="e-${f}-${i}" style="width:90%" ${t==='number'?'step="1000" min="0"':''}>`;
-}
-function simpanEdit(i) {
-  const a = anggota[i];
-  ['tgl','nama','pokok','wajib','sukarela','shu'].forEach(f => {
-    const el = document.getElementById(`e-${f}-${i}`);
-    if (el) {
-      const v = f==='tgl'?el.value : f==='nama'?el.value.trim() : +el.value||0;
-      if (f==='nama' && !v) return alert('Nama wajib!');
-      if ((f==='pokok'||f==='wajib') && v<1000) return alert(`${f} min 1.000`);
-      a[f] = v;
+    function simpan() { localStorage.setItem(KEY, JSON.stringify({data, trx})); }
+    function muat() {
+      const d = localStorage.getItem(KEY);
+      if (d) { const o = JSON.parse(d); data = o.data || []; trx = o.trx || []; }
     }
-  });
-  a.total = a.pokok + a.wajib + a.sukarela;
-  const init = transaksi.find(t => t.id===a.id && t.ket==='Pendaftaran');
-  if (init) {
-    init.tgl = a.tgl; init.nama = a.nama; init.tambahWajib = a.wajib; init.tambahSukarela = a.sukarela;
-    init.sukarelaSetelah = a.sukarela;
-  }
-  renderA(); updateSel(); renderT(); simpan();
-}
-function hapusA(i) {
-  if (confirm(`Hapus ${anggota[i].nama}?`)) {
-    const id = anggota[i].id;
-    anggota.splice(i,1);
-    transaksi = transaksi.filter(t => t.id !== id);
-    renderA(); updateSel(); renderT(); simpan();
-  }
-}
-function updateSel() {
-  const s = document.getElementById('selAnggota');
-  s.innerHTML = '<option value="">-- Pilih --</option>';
-  anggota.forEach((a,i) => s.innerHTML += `<option value="${i}">${a.id} - ${a.nama}</option>`);
-}
+    function hapusSemua() { if (confirm('Hapus semua?')) { localStorage.removeItem(KEY); location.reload(); } }
 
-// TRANSAKSI
-function updatePreview() {
-  const i = document.getElementById('selAnggota').value;
-  const p = document.getElementById('previewArea');
-  if (!i) { p.innerHTML = 'Pilih anggota...'; return; }
-  const a = anggota[i];
-  p.innerHTML = `<strong>${a.nama} (${a.id})</strong><br>
-    Pokok: ${fmt(a.pokok)} | Wajib: ${fmt(a.wajib)}<br>
-    Sukarela: ${fmt(a.sukarela)} | SHU: ${fmt(a.shu)}<br>
-    <strong>Total: ${fmt(a.total + a.shu)}</strong>`;
-}
-function proses() {
-  const i = document.getElementById('selAnggota').value;
-  const tgl = document.getElementById('trxTanggal').value;
-  const tw = +document.getElementById('tw').value || 0;
-  const ts = +document.getElementById('ts').value || 0;
-  const bel = +document.getElementById('bel').value || 0;
-  if (!i || !tgl || (tw+ts+bel===0)) return alert('Pilih & isi transaksi!');
+    window.onload = () => {
+      const t = new Date().toISOString().split('T')[0];
+      document.getElementById('tglDaftar').value = t;
+      document.getElementById('tglTrx').value = t;
+      muat(); render(); updateSelect();
+    };
 
-  const a = anggota[i];
-  const b = a.sukarela * 0.005;
-  a.sukarela += b + ts;
-  a.wajib += tw;
-  a.total = a.pokok + a.wajib + a.sukarela;
-
-  transaksi.push({tgl, id:a.id, nama:a.nama, tambahWajib:tw, tambahSukarela:ts, bunga:b, sukarelaSetelah:a.sukarela, belanja:bel, ket:'Transaksi'});
-
-  document.getElementById('tw').value = 0;
-  document.getElementById('ts').value = 0;
-  document.getElementById('bel').value = 0;
-  renderA(); renderT(); updatePreview(); simpan();
-  alert('Transaksi OK!');
-}
-function bunga1() {
-  const tgl = document.getElementById('trxTanggal').value;
-  if (!tgl) return alert('Pilih tanggal!');
-  let c = 0;
-  anggota.forEach(a => {
-    if (a.sukarela > 0) {
-      const b = a.sukarela * 0.005;
-      a.sukarela += b; a.total = a.pokok + a.wajib + a.sukarela;
-      transaksi.push({tgl, id:a.id, nama:a.nama, tambahWajib:0, tambahSukarela:0, bunga:b, sukarelaSetelah:a.sukarela, belanja:0, ket:'Bunga'});
-      c++;
+    function openTab(id) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelector(`nav button[onclick="openTab('${id}')"]`).classList.add('active');
     }
-  });
-  renderA(); renderT(); simpan();
-  alert(`Bunga 1 bulan: ${c} anggota`);
-}
-function bungaCustom() {
-  const tgl = document.getElementById('trxTanggal').value;
-  const m = +document.getElementById('bln').value || 1;
-  if (!tgl || m<1) return alert('Isi tanggal & bulan!');
-  let c = 0;
-  anggota.forEach(a => {
-    let cur = a.sukarela;
-    for (let i=0; i<m; i++) {
-      const d = new Date(tgl); d.setMonth(d.getMonth()-i);
-      const ds = d.toISOString().slice(0,10);
-      if (cur>0) {
-        const b = cur*0.005;
-        cur += b;
-        transaksi.push({tgl:ds, id:a.id, nama:a.nama, tambahWajib:0, tambahSukarela:0, bunga:b, sukarelaSetelah:cur, belanja:0, ket:`Bunga ${d.toLocaleString('id-ID',{month:'long'})}`});
+
+    function fmt(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+    function tambah() {
+      const tgl = document.getElementById('tglDaftar').value;
+      let id = document.getElementById('idAnggota').value.trim();
+      const nama = document.getElementById('namaAnggota').value.trim();
+      const p = +document.getElementById('pokok').value;
+      const w = +document.getElementById('wajib').value;
+      const s = +document.getElementById('sukarela').value;
+
+      if (!tgl || !nama || p < 1000 || w < 1000) return alert('Isi lengkap! Pokok & Wajib min 1.000');
+      if (!id) id = 'A' + String(data.length + 1).padStart(3, '0');
+      if (data.some(a => a.id === id)) return alert('ID sudah ada!');
+
+      const a = {tgl, id, nama, pokok:p, wajib:w, sukarela:s, shu:0};
+      a.total = p + w + s;
+      data.push(a);
+      trx.push({tgl, id, nama, tambahWajib:w, tambahSukarela:s, bunga:0, sukarelaSetelah:s, belanja:0});
+      resetForm(); render(); updateSelect(); simpan();
+      alert('Ditambah!');
+    }
+
+    function resetForm() {
+      document.getElementById('idAnggota').value = '';
+      document.getElementById('namaAnggota').value = '';
+      document.getElementById('pokok').value = '100000';
+      document.getElementById('wajib').value = '50000';
+      document.getElementById('sukarela').value = '0';
+    }
+
+    function render() {
+      const tb = document.querySelector('#tabelAnggota tbody');
+      tb.innerHTML = '';
+      data.forEach((a, i) => {
+        tb.innerHTML += `<tr>
+          <td>${a.tgl}</td><td>${a.id}</td><td>${a.nama}</td>
+          <td>${fmt(a.pokok)}</td><td>${fmt(a.wajib)}</td><td>${fmt(a.sukarela)}</td>
+          <td>${fmt(a.shu)}</td><td><strong>${fmt(a.total + a.shu)}</strong></td>
+          <td><button class="btn-danger" onclick="hapus(${i})">Hapus</button></td>
+        </tr>`;
+      });
+    }
+
+    function hapus(i) {
+      if (confirm('Hapus ' + data[i].nama + '?')) {
+        const id = data[i].id;
+        data.splice(i, 1);
+        trx = trx.filter(t => t.id !== id);
+        render(); updateSelect(); simpan();
       }
     }
-    if (cur > a.sukarela) { a.sukarela=cur; a.total=a.pokok+a.wajib+a.sukarela; c++; }
-  });
-  renderA(); renderT(); simpan();
-  alert(`Bunga ${m} bulan: ${c} anggota`);
-}
-function renderT() {
-  const tb = document.querySelector('#tableTransaksi tbody');
-  tb.innerHTML = '';
-  transaksi.slice().reverse().forEach(t => {
-    tb.innerHTML += `<tr>
-      <td>${t.tgl}</td><td>${t.id}</td><td>${t.nama}</td>
-      <td>${fmt(t.tambahWajib)}</td><td>${fmt(t.tambahSukarela)}</td>
-      <td>${fmt(t.bunga)}</td><td>${fmt(t.sukarelaSetelah)}</td>
-      <td>${fmt(t.belanja)}</td>
-    </tr>`;
-  });
-}
-function updateAll() {
-  const p = document.getElementById('previewArea');
-  if (!anggota.length) { p.innerHTML='Kosong'; return; }
-  let h = '<h4>Semua Anggota</h4>';
-  anggota.forEach(a => {
-    h += `<div style="margin:8px 0;padding:8px;background:#f9f9f9;border-radius:4px;">
-      <strong>${a.nama} (${a.id})</strong><br>
-      Pokok: ${fmt(a.pokok)} | Wajib: ${fmt(a.wajib)}<br>
-      Sukarela: ${fmt(a.sukarela)} | SHU: ${fmt(a.shu)}<br>
-      <strong>Total: ${fmt(a.total + a.shu)}</strong>
-    </div>`;
-  });
-  p.innerHTML = h;
-}
 
-// SHU
-function gantiPeriode() {
-  const p = document.getElementById('periode').value;
-  const inp = document.getElementById('bulan');
-  if (p==='tahunan') {
-    inp.type='number'; inp.placeholder='2025'; inp.value = new Date().getFullYear();
-  } else {
-    inp.type='month'; inp.value = new Date().toISOString().slice(0,7);
-  }
-}
-function hitung() {
-  if (!anggota.length) return alert('Tambah anggota dulu!');
-  const prof = +document.getElementById('profit').value || 0;
-  if (prof<=0) return alert('Isi total SHU!');
+    function updateSelect() {
+      const s = document.getElementById('pilihAnggota');
+      s.innerHTML = '<option value="">-- Pilih --</option>';
+      data.forEach((a, i) => s.innerHTML += `<option value="${i}">${a.id} - ${a.nama}</option>`);
+    }
 
-  const pers = {};
-  ['Modal','Belanja','Cadangan','Pengurus','Pengawas','Karyawan','Sosial','Pendidikan','DanaBangun'].forEach(k => {
-    pers[k.toLowerCase()] = +document.getElementById('p'+k).value || 0;
-  });
-  const sum = Object.values(pers).reduce((a,b)=>a+b,0);
-  document.getElementById('totalP').textContent = `Total: ${sum.toFixed(1)}% ${sum===100?'OK':'(Harus 100%)'}`;
-  if (Math.abs(sum-100)>0.1) return alert('Persentase harus 100%!');
+    function prosesTrx() {
+      const i = document.getElementById('pilihAnggota').value;
+      const tgl = document.getElementById('tglTrx').value;
+      const tw = +document.getElementById('addWajib').value || 0;
+      const ts = +document.getElementById('addSukarela').value || 0;
+      const b = +document.getElementById('belanja').value || 0;
+      if (!i || !tgl || (tw + ts + b === 0)) return853 alert('Isi transaksi!');
 
-  const mSHU = prof * (pers.modal/100);
-  const totM = anggota.reduce((s,a)=>s+a.pokok+a.wajib,0);
-  const bSHU = prof * (pers.belanja/100);
-  const totB = transaksi.reduce((s,t)=>s+t.belanja,0);
-  const mapB = {}; transaksi.forEach(t=>mapB[t.id]=(mapB[t.id]||0)+t.belanja);
+      const a = data[i];
+      const bunga = a.sukarela * 0.005;
+      a.sukarela += bunga + ts;
+      a.wajib += tw;
+      a.total = a.pokok + a.wajib + a.sukarela;
 
-  const res = [];
-  anggota.forEach(a => {
-    const mod = a.pokok + a.wajib;
-    const sM = totM>0 ? (mod/totM)*mSHU : 0;
-    const bel = mapB[a.id]||0;
-    const sB = totB>0 && bel>0 ? (bel/totB)*bSHU : 0;
-    const tot = sM + sB;
-    res.push({id:a.id,nama:a.nama,modal:mod,belanja:bel,shuM:sM,shuB:sB,total:tot});
-    a.shu = tot;
-  });
+      trx.push({tgl, id:a.id, nama:a.nama, tambahWajib:tw, tambahSukarela:ts, bunga, sukarelaSetelah:a.sukarela, belanja:b});
+      document.getElementById('addWajib').value = document.getElementById('addSukarela').value = document.getElementById('belanja').value = 0;
+      render(); updatePreview(); simpan();
+      alert('OK!');
+    }
 
-  const tb1 = document.querySelector('#tSHU tbody'); tb1.innerHTML='';
-  res.forEach(r => tb1.innerHTML += `<tr><td>${r.id}</td><td>${r.nama}</td><td>${fmt(r.modal)}</td><td>${fmt(r.belanja)}</td><td>${fmt(r.shuM)}</td><td>${fmt(r.shuB)}</td><td><strong>${fmt(r.total)}</strong></td></tr>`);
+    function updatePreview() {
+      const i = document.getElementById('pilihAnggota').value;
+      const p = document.getElementById('preview');
+      if (!i) { p.innerHTML = 'Pilih anggota...'; return; }
+      const a = data[i];
+      p.innerHTML = `<strong>${a.nama}</strong><br>Pokok: ${fmt(a.pokok)} | Wajib: ${fmt(a.wajib)}<br>Sukarela: ${fmt(a.sukarela)} | Total: <strong>${fmt(a.total + a.shu)}</strong>`;
+    }
 
-  const pos = [
-    {n:'Cadangan',p:pers.cadangan}, {n:'Pengurus',p:pers.pengurus}, {n:'Pengawas',p:pers.pengawas},
-    {n:'Karyawan',p:pers.karyawan}, {n:'Sosial',p:pers.sosial}, {n:'Pendidikan',p:pers.pendidikan},
-    {n:'Dana Bangun',p:pers.danabangun}
-  ];
-  const tb2 = document.querySelector('#tPos tbody'); tb2.innerHTML='';
-  pos.forEach(p => tb2.innerHTML += `<tr><td>${p.n}</td><td>${p.p}%</td><td>${fmt(prof*(p.p/100))}</td></tr>`);
+    function lihatSemua() {
+      let h = '<h4>Semua Anggota</h4>';
+      data.forEach(a => h += `<div style="margin:8px 0;padding:8px;background:#f9f9f9"><strong>${a.nama}</strong>: ${fmt(a.total + a.shu)}</div>`);
+      document.getElementById('preview').innerHTML = h;
+    }
 
-  renderA(); updateAll(); simpan();
-  alert('SHU selesai!');
-}
-
-// EXPORT
-function exportToExcel() {
-  if (!anggota.length) return alert('Kosong!');
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(anggota.map(a=>({
-    Tanggal:a.tgl,ID:a.id,Nama:a.nama,'Simpanan Pokok':a.pokok,'Simpanan Wajib':a.wajib,
-    'Simpanan Sukarela':a.sukarela,SHU:a.shu,'Total Dana':a.total+a.shu
-  })), 'Data Anggota');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(transaksi.slice().reverse().map(t=>({
-    Tanggal:t.tgl,ID:t.id,Nama:t.nama,'Tambah Wajib':t.tambahWajib,'Tambah Sukarela':t.tambahSukarela,
-    'Bunga Sukarela':t.bunga,'Sukarela Setelah':t.sukarelaSetelah,Belanja:t.belanja,Keterangan:t.ket
-  })), 'Riwayat Transaksi');
-  XLSX.writeFile(wb, 'Koperasi.xlsx');
-}
-function exportSHU() {
-  if (!anggota.length) return alert('Hitung SHU dulu!');
-  const wb = XLSX.utils.book_new();
-  const per = document.getElementById('periode').value;
-  const bt = document.getElementById('bulan').value;
-  const txt = per==='bulanan' ? `Bulan ${new Date(bt+'-01').toLocaleString('id-ID',{month:'long',year:'numeric'})}` : `Tahun ${bt}`;
-  const d1 = Array.from(document.querySelector('#tSHU tbody').children).map(r=>({
-    ID:r.cells[0].textContent,Nama:r.cells[1].textContent,
-    Modal:parseFloat(r.cells[2].textContent.replace(/[^\d]/g,'')),
-    Belanja:parseFloat(r.cells[3].textContent.replace(/[^\d]/g,'')),
-    'SHU Modal':parseFloat(r.cells[4].textContent.replace(/[^\d]/g,'')),
-    'SHU Belanja':parseFloat(r.cells[5].textContent.replace(/[^\d]/g,'')),
-    Total:parseFloat(r.cells[6].textContent.replace(/[^\d]/g,''))
-  }));
-  d1.unshift({ID:`Periode: ${txt}`});
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d1), 'SHU Anggota');
-  const d2 = Array.from(document.querySelector('#tPos tbody').children).map(r=>({
-    Pos:r.cells[0].textContent,Persentase:r.cells[1].textContent,
-    Nominal:parseFloat(r.cells[2].textContent.replace(/[^\d]/g,''))
-  }));
-  d2.unshift({Pos:`Periode: ${txt}`});
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d2), 'SHU Pos');
-  XLSX.writeFile(wb, `SHU_${per}_${bt}.xlsx`);
-}
-
-// IMPORT
-document.getElementById('importExcel').onchange = function(e) {
-  const f = e.target.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    try {
-      const wb = XLSX.read(ev.target.result, {type:'array'});
-      anggota = []; transaksi = [];
-
-      const wsA = wb.Sheets['Data Anggota'];
-      if (wsA) XLSX.utils.sheet_to_json(wsA).forEach(x => {
-        if (x.Tanggal && x.ID && x.Nama) anggota.push({
-          tgl:x.Tanggal,id:x.ID,nama:x.Nama,
-          pokok:+x['Simpanan Pokok']||0,wajib:+x['Simpanan Wajib']||0,
-          sukarela:+x['Simpanan Sukarela']||0,shu:+x.SHU||0
-        });
+    function bunga1Bulan() {
+      const tgl = document.getElementById('tglTrx').value;
+      if (!tgl) return alert('Pilih tanggal!');
+      data.forEach(a => {
+        if (a.sukarela > 0) {
+          const b = a.sukarela * 0.005;
+          a.sukarela += b; a.total = a.pokok + a.wajib + a.sukarela;
+          trx.push({tgl, id:a.id, nama:a.nama, tambahWajib:0, tambahSukarela:0, bunga:b, sukarelaSetelah:a.sukarela, belanja:0});
+        }
       });
+      render(); simpan(); alert('Bunga 1 bulan diterapkan!');
+    }
 
-      const wsT = wb.Sheets['Riwayat Transaksi'];
-      if (wsT) XLSX.utils.sheet_to_json(wsT).forEach(x => {
-        if (x.Tanggal && x.ID && x.Nama) transaksi.push({
-          tgl:x.Tanggal,id:x.ID,nama:x.Nama,
-          tambahWajib:+x['Tambah Wajib']||0,tambahSukarela:+x['Tambah Sukarela']||0,
-          bunga:+x['Bunga Sukarela']||0,sukarelaSetelah:+x['Sukarela Setelah']||0,
-          belanja:+x.Belanja||0,ket:x.Keterangan||''
-        });
+    function toggle(id) { document.getElementById(id).classList.toggle('hidden'); }
+
+    function hitungSHU() {
+      const profit = +document.getElementById('totalSHU').value || 0;
+      if (!profit) return alert('Isi total SHU!');
+      const modalTotal = data.reduce((s,a) => s + a.pokok + a.wajib, 0);
+      const belanjaTotal = trx.reduce((s,t) => s + t.belanja, 0);
+      const mapBelanja = {}; trx.forEach(t => mapBelanja[t.id] = (mapBelanja[t.id] || 0) + t.belanja);
+
+      const shuModal = profit * 0.4;
+      const shuBelanja = profit * 0.05;
+
+      const tb = document.querySelector('#tabelSHU tbody'); tb.innerHTML = '';
+      data.forEach(a => {
+        const modal = a.pokok + a.wajib;
+        const sm = modalTotal > 0 ? (modal / modalTotal) * shuModal : 0;
+        const bel = mapBelanja[a.id] || 0;
+        const sb = belanjaTotal > 0 && bel > 0 ? (bel / belanjaTotal) * shuBelanja : 0;
+        const total = sm + sb;
+        a.shu = total;
+        tb.innerHTML += `<tr><td>${a.id}</td><td>${a.nama}</td><td>${fmt(modal)}</td><td>${fmt(bel)}</td><td>${fmt(sm)}</td><td>${fmt(sb)}</td><td><strong>${fmt(total)}</strong></td></tr>`;
       });
+      render(); simpan();
+    }
 
-      anggota.forEach(a => a.total = a.pokok + a.wajib + a.sukarela);
-      renderA(); updateSel(); renderT(); simpan();
-      alert('Import berhasil!');
-    } catch(err) { alert('Gagal import!'); }
-  };
-  r.readAsArrayBuffer(f);
-};
-</script>
+    function exportAll() {
+      if (!data.length) return alert('Kosong!');
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.map(a => ({
+        Tanggal: a.tgl, ID: a.id, Nama: a.nama, Pokok: a.pokok, Wajib: a.wajib, Sukarela: a.sukarela, SHU: a.shu, Total: a.total + a.shu
+      })), 'Anggota');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(trx.slice().reverse().map(t => ({
+        Tanggal: t.tgl, ID: t.id, Nama: t.nama, 'Tambah Wajib': t.tambahWajib, 'Tambah Sukarela': t.tambahSukarela,
+        Bunga: t.bunga, 'Sukarela Setelah': t.sukarelaSetelah, Belanja: t.belanja
+      })), 'Transaksi');
+      XLSX.writeFile(wb, 'Koperasi_Pasirgombong.xlsx');
+    }
+
+    document.getElementById('importFile').onchange = e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        try {
+          const wb = XLSX.read(ev.target.result, {type:'array'});
+          const ws = wb.Sheets['Anggota'];
+          if (ws) {
+            const json = XLSX.utils.sheet_to_json(ws);
+            data = json.map(x => ({
+              tgl: x.Tanggal, id: x.ID, nama: x.Nama,
+              pokok: +x.Pokok || 0, wajib: +x.Wajib || 0, sukarela: +x.Sukarela || 0, shu: +x.SHU || 0
+            }));
+            data.forEach(a => a.total = a.pokok + a.wajib + a.sukarela);
+            render(); updateSelect(); simpan();
+            alert('Import berhasil!');
+          }
+        } catch { alert('Gagal import!'); }
+      };
+      r.readAsArrayBuffer(f);
+    };
+  </script>
 </body>
 </html>
