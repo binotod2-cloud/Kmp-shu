@@ -28,9 +28,11 @@ button:hover { background:#0b7dda; }
 .btn-danger:hover { background:#da190b; }
 #previewArea { background:#fff3cd; padding:10px; border-radius:4px; border:1px solid #ffc107; }
 .info-box { background:#e3f2fd; padding:10px; border-radius:4px; margin:10px 0; border-left:4px solid #2196F3; }
-.toggle-btn { background:#ff9800; color:white; margin-bottom:10px; }
+.toggle-btn { background:#ff9800; color:white; margin-left:8px; font-size:12px; padding:6px 10px; }
 .toggle-btn:hover { background:#e68a00; }
 .hidden { display:none; }
+.reset-btn { background:#f44336; margin-top:10px; }
+.reset-btn:hover { background:#d32f2f; }
 </style>
 </head>
 <body>
@@ -41,11 +43,15 @@ button:hover { background:#0b7dda; }
   <button onclick="showTab('transaksi')">Simpanan & Riwayat</button>
   <button onclick="showTab('shu')">Kalkulasi SHU</button>
   <button onclick="exportToExcel()">Export Excel</button>
+  <button class="reset-btn" onclick="resetAllData()">Reset Semua Data</button>
 </nav>
 
 <!-- ===== DATA ANGGOTA ===== -->
 <div id="tab-anggota">
-<h3>Data Anggota</h3>
+<h3>Data Anggota 
+  <button class="toggle-btn" onclick="toggleSection('section-daftar-anggota')">Toggle</button>
+</h3>
+<div id="section-daftar-anggota">
 <div class="row">
   <div><label>Tanggal Daftar</label><input type="date" id="daftarTanggal"></div>
   <div><label>ID Anggota</label><input type="text" id="daftarId" placeholder="Auto generate"></div>
@@ -74,6 +80,7 @@ button:hover { background:#0b7dda; }
   </tr></thead>
   <tbody></tbody>
 </table>
+</div>
 </div>
 
 <!-- ===== TRANSAKSI ===== -->
@@ -119,7 +126,7 @@ button:hover { background:#0b7dda; }
   Info Anggota
   <button class="toggle-btn" onclick="toggleTable('tableInfoAnggota')">Toggle Tabel</button>
 </h4>
-<table id="tableInfoAnggota">
+<table id="tableInfoAnggota" class="hidden">
   <thead><tr>
     <th>Tanggal</th><th>ID</th><th>Nama</th>
     <th>Tambah Wajib</th><th>Tambah Sukarela</th>
@@ -133,7 +140,7 @@ button:hover { background:#0b7dda; }
   Riwayat Transaksi
   <button class="toggle-btn" onclick="toggleTable('tableTransaksi')">Toggle Tabel</button>
 </h4>
-<table id="tableTransaksi">
+<table id="tableTransaksi" class="hidden">
   <thead><tr>
     <th>Tanggal</th><th>ID</th><th>Nama</th>
     <th>Tambah Wajib</th><th>Tambah Sukarela</th>
@@ -186,7 +193,9 @@ button:hover { background:#0b7dda; }
   <span class="muted" id="totalPersen"></span>
 </div>
 
-<h4>SHU per Anggota</h4>
+<h4>SHU per Anggota 
+  <button class="toggle-btn" onclick="toggleTable('tableSHU')">Toggle</button>
+</h4>
 <table id="tableSHU">
   <thead><tr>
     <th>ID</th><th>Nama</th>
@@ -249,6 +258,36 @@ function loadFromStorage() {
   }
 }
 
+// ===== RESET SEMUA DATA =====
+function resetAllData() {
+  if (confirm('Yakin ingin HAPUS SEMUA DATA? Ini tidak bisa dikembalikan!')) {
+    anggotaList = [];
+    transaksiList = [];
+    localStorage.removeItem(STORAGE_KEY);
+    renderTableAnggota();
+    updateSelectAnggota();
+    renderTableTransaksi();
+    renderTableInfoAnggota();
+    document.querySelector('#tableSHU tbody').innerHTML = '';
+    document.querySelector('#tableSHUPos tbody').innerHTML = '';
+    alert('Semua data telah direset!');
+  }
+}
+
+// ===== TOGGLE SECTION & TABLE =====
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('hidden');
+}
+function toggleTable(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('hidden');
+}
+function togglePreview() {
+  const el = document.getElementById('previewArea');
+  if (el) el.classList.toggle('hidden');
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date();
@@ -281,8 +320,6 @@ function shuPeriodeChange() {
   }
 }
 function formatRupiah(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
-function toggleTable(id) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden'); }
-function togglePreview() { const el = document.getElementById('previewArea'); if(el) el.classList.toggle('hidden'); }
 
 // ===== TRIGGER SAVE =====
 function triggerSave() {
