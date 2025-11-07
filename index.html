@@ -3,392 +3,482 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KMP pasirgombong v 1.7.1</title>
+<title>KMP pasirgombong v 1.7.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-body { font-family: Arial; margin:20px; background:#f5f7fb; color:#222; }
-h2,h3,h4 { margin:10px 0; }
-.container { max-width:1400px; margin:auto; }
-nav button { margin-right:8px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:4px; }
-nav button:hover { background:#45a049; }
-.row, .row3 { display:flex; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
-.row div, .row3 div { flex:1; min-width:150px; display:flex; flex-direction:column; }
-table { width:100%; border-collapse:collapse; margin-top:10px; background:white; }
-table, th, td { border:1px solid #ddd; }
-th { background:#4CAF50; color:white; padding:8px; text-align:center; }
-td { padding:6px; text-align:center; }
-input, select { width:100%; padding:6px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; }
-.small { font-size:12px; }
-.muted { color:#666; font-style:italic; }
-button { cursor:pointer; padding:8px 16px; border:none; border-radius:4px; background:#2196F3; color:white; }
-button:hover { background:#0b7dda; }
-.btn-success { background:#4CAF50; }
-.btn-success:hover { background:#45a049; }
-.btn-danger { background:#f44336; }
-.btn-danger:hover { background:#da190b; }
-.btn-save-all { background:#FF9800; font-weight:bold; margin-right:8px; }
-.btn-save-all:hover { background:#e68a00; }
-#previewArea { background:#fff3cd; padding:10px; border-radius:4px; border:1px solid #ffc107; }
-.info-box { background:#e3f2fd; padding:10px; border-radius:4px; margin:10px 0; border-left:4px solid #2196F3; }
-.toggle-btn { background:#ff9800; color:white; margin-left:8px; font-size:12px; padding:6px 10px; }
-.toggle-btn:hover { background:#e68a00; }
-.hidden { display:none; }
-.reset-btn { background:#f44336; margin-top:10px; }
-.reset-btn:hover { background:#d32f2f; }
+  :root {
+    --primary: #4CAF50;
+    --success: #4CAF50;
+    --danger: #f44336;
+    --warning: #FF9800;
+    --info: #2196F3;
+    --bg: #f5f7fb;
+    --card: white;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: 'Segoe UI', Arial; background: var(--bg); color: #222; padding: 20px; }
+  .container { max-width: 1400px; margin: auto; }
+  h2 { text-align: center; margin-bottom: 15px; color: var(--primary); }
+  nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+  nav button { padding: 10px 16px; border: none; border-radius: 6px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  nav button:hover { background: #45a049; }
+  .tab { display: none; background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .tab.active { display: block; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
+  .row > div { flex: 1; min-width: 160px; }
+  label { display: block; margin-bottom: 5px; font-weight: 600; }
+  input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+  button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #45a049; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #d32f2f; }
+  .btn-save-all { background: var(--warning); color: white; font-weight: bold; }
+  .btn-save-all:hover { background: #e68a00; }
+  .btn-info { background: var(--info); color: white; }
+  .btn-info:hover { background: #1976d2; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+  th { background: var(--primary); color: white; }
+  .editable { cursor: pointer; }
+  .editable:hover { background: #f0f8ff; }
+  .info-box { background: #e3f2fd; border-left: 4px solid var(--info); padding: 12px; border-radius: 4px; margin: 15px 0; font-size: 14px; }
+  .muted { color: #666; font-style: italic; font-size: 13px; }
+  .toggle-btn { background: var(--warning); color: white; font-size: 11px; padding: 4px 8px; margin-left: 8px; }
+  .hidden { display: none; }
+  #previewArea { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin: 15px 0; font-size: 13px; }
+  .reset-btn { background: var(--danger); }
+  .reset-btn:hover { background: #c62828; }
 </style>
 </head>
 <body>
+
 <div class="container">
-<h2>KMP pasirgombong v 1.7.1</h2>
-<nav>
-  <button onclick="showTab('anggota')">Data Anggota</button>
-  <button onclick="showTab('transaksi')">Simpanan & Riwayat</button>
-  <button onclick="showTab('shu')">Kalkulasi SHU</button>
-  <button onclick="exportToExcel()">Export Excel</button>
-  <button class="reset-btn" onclick="resetAllData()">Reset Semua Data</button>
-</nav>
+  <h2>KMP pasirgombong v 1.7.2</h2>
+  <nav>
+    <button onclick="openTab('anggota')">Data Anggota</button>
+    <button onclick="openTab('transaksi')">Simpanan & Riwayat</button>
+    <button onclick="openTab('shu')">Kalkulasi SHU</button>
+    <button onclick="exportAll()">Export Excel</button>
+    <button class="reset-btn" onclick="clearAll()">Reset Data</button>
+  </nav>
 
-<!-- ===== DATA ANGGOTA ===== -->
-<div id="tab-anggota">
-<h3>Data Anggota 
-  <button class="toggle-btn" onclick="toggleSection('section-daftar-anggota')">Toggle</button>
-</h3>
-<div id="section-daftar-anggota">
-<div class="row">
-  <div><label>Tanggal Daftar</label><input type="date" id="daftarTanggal"></div>
-  <div><label>ID Anggota</label><input type="text" id="daftarId" placeholder="Auto generate"></div>
-</div>
-<div class="row">
-  <div><label>Nama Anggota</label><input type="text" id="daftarNama"></div>
-  <div><label>Simpanan Pokok (Rp)</label><input type="number" id="daftarPokok" value="100000" min="1" step="1000"></div>
-</div>
-<div class="row">
-  <div><label>Simpanan Wajib Awal (Rp)</label><input type="number" id="daftarWajib" value="50000" min="1" step="1000"></div>
-  <div><label>Simpanan Sukarela Awal (Rp)</label><input type="number" id="daftarSukarela" value="0" min="0" step="1000"></div>
-</div>
-<div>
-  <button class="btn-success" onclick="tambahAnggota()">Tambah Anggota</button>
-  <input type="file" id="importExcel" accept=".xlsx,.xls" onchange="importFromExcel()" style="display:none;">
-  <button onclick="document.getElementById('importExcel').click()" class="btn-success">Import Excel</button>
-  <span class="muted">* Pokok & Wajib wajib diisi (min Rp 1), Sukarela boleh 0</span>
-</div>
-
-<!-- SAVE ALL ANGGOTA -->
-<div style="margin:15px 0;">
-  <button class="btn-save-all" onclick="saveAllAnggota()">Save All (Anggota)</button>
-  <span class="muted">Simpan semua perubahan di tabel anggota sekaligus</span>
-</div>
-
-<h4>Daftar Anggota</h4>
-<table id="tableAnggota">
-  <thead><tr>
-    <th>Tanggal</th><th>ID</th><th>Nama</th>
-    <th>Simpanan Pokok</th><th>Simpanan Wajib</th><th>Simpanan Sukarela</th>
-    <th>SHU</th><th>Total Dana</th><th>Aksi</th>
-  </tr></thead>
-  <tbody></tbody>
-</table>
-</div>
-</div>
-
-<!-- ===== SIMPANAN & RIWAYAT ===== -->
-<div id="tab-transaksi" style="display:none">
-<h3>Transaksi Simpanan</h3>
-
-<div class="info-box">
-  <strong>Info:</strong> Bunga simpanan sukarela otomatis dihitung 0.5% per bulan (compound) pada transaksi reguler. 
-  Gunakan tombol Hitung Bunga untuk menghitung bunga secara massal.
-</div>
-
-<div class="row3">
-  <div><label>Pilih Anggota</label>
-    <select id="selAnggota" onchange="updatePreviewAnggota()">
-      <option value="">-- Pilih Anggota --</option>
-    </select>
+  <!-- TAB ANGGOTA -->
+  <div id="anggota" class="tab active">
+    <h3>Data Anggota <button class="toggle-btn" onclick="toggle('form-anggota')">Toggle</button></h3>
+    <div id="form-anggota">
+      <div class="row">
+        <div><label>Tanggal Daftar</label><input type="date" id="tglDaftar"></div>
+        <div><label>ID Anggota</label><input type="text" id="idAnggota" placeholder="Auto"></div>
+      </div>
+      <div class="row">
+        <div><label>Nama</label><input type="text" id="namaAnggota"></div>
+        <div><label>Pokok (Rp)</label><input type="number" id="pokok" value="100000" min="1" step="1000"></div>
+      </div>
+      <div class="row">
+        <div><label>Wajib Awal (Rp)</label><input type="number" id="wajib" value="50000" min="1" step="1000"></div>
+        <div><label>Sukarela Awal (Rp)</label><input type="number" id="sukarela" value="0" min="0" step="1000"></div>
+      </div>
+      <div>
+        <button class="btn-success" onclick="addMember()">Tambah</button>
+        <input type="file" id="fileImport" accept=".xlsx" style="display:none;">
+        <button class="btn-success" onclick="document.getElementById('fileImport').click()">Import Excel</button>
+        <span class="muted">* Pokok & Wajib wajib diisi</span>
+      </div>
+      <div style="margin:15px 0;">
+        <button class="btn-save-all" onclick="saveAllMembers()">Save All Anggota</button>
+        <span class="muted">Simpan semua edit sekaligus</span>
+      </div>
+    </div>
+    <table id="tblAnggota">
+      <thead><tr>
+        <th>Tanggal</th><th>ID</th><th>Nama</th>
+        <th>Pokok</th><th>Wajib</th><th>Sukarela</th>
+        <th>SHU</th><th>Total</th><th>Aksi</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
-  <div><label>Tanggal Transaksi</label><input type="date" id="trxTanggal"></div>
-  <div><label>Bunga Sukarela (% per bulan)</label><input type="number" id="bungaPersen" value="0.5" step="0.01" min="0" readonly></div>
-</div>
 
-<div class="row3">
-  <div><label>Tambah Simpanan Wajib (Rp)</label><input type="number" id="inputTambahWajib" value="0" step="1000" min="0"></div>
-  <div><label>Tambah Simpanan Sukarela (Rp)</label><input type="number" id="inputTambahSukarela" value="0" step="1000" min="0"></div>
-  <div><label>Belanja di Koperasi (Rp)</label><input type="number" id="inputBelanja" value="0" step="1000" min="0"></div>
-</div>
+  <!-- TAB TRANSAKSI -->
+  <div id="transaksi" class="tab">
+    <h3>Transaksi Simpanan</h3>
+    <div class="info-box">Bunga sukarela 0.5% per bulan. Gunakan Hitung Bunga untuk massal.</div>
+    <div class="row">
+      <div><label>Pilih Anggota</label>
+        <select id="selMember" onchange="showPreview()"><option value="">-- Pilih --</option></select>
+      </div>
+      <div><label>Tanggal</label><input type="date" id="tglTrx"></div>
+      <div><label>Bunga (%)</label><input type="number" value="0.5" readonly></div>
+    </div>
+    <div class="row">
+      <div><label>+ Wajib</label><input type="number" id="addWajib" min="0" step="1000"></div>
+      <div><label>+ Sukarela</label><input type="number" id="addSukarela" min="0" step="1000"></div>
+      <div><label>Belanja</label><input type="number" id="belanja" min="0" step="1000"></div>
+    </div>
+    <div>
+      <button class="btn-success" onclick="addTransaction()">Proses</button>
+      <button class="btn-info" onclick="showAllMembers()">Update Semua</button>
+      <button class="btn-success" onclick="calcInterest(1)">Bunga 1 Bulan</button>
+      <button class="btn-success" onclick="calcInterestCustom()">Bunga Custom</button>
+      <input type="number" id="bulanCustom" value="12" min="1" style="width:70px;margin-left:8px;">
+    </div>
+    <h4>Preview <button class="toggle-btn" onclick="toggle('preview')">Toggle</button></h4>
+    <div id="preview" class="hidden"></div>
 
-<div>
-  <button class="btn-success" onclick="prosesTransaksi()">Proses Transaksi</button>
-  <button onclick="updateAllMembers()" style="background:#2196F3;color:white;">Update Semua Anggota</button>
-  <button class="btn-success" onclick="applyInterestOneMonth()">Hitung Bunga 1 Bulan</button>
-  <button class="btn-success" onclick="applyInterestCustomMonths()">Hitung Bunga Custom</button>
-  <input type="number" id="customBulan" value="12" min="1" step="1" style="width:80px; margin-left:8px;" placeholder="Bulan">
-</div>
+    <div style="margin:15px 0;">
+      <button class="btn-save-all" onclick="saveAllTransactions()">Save All Transaksi</button>
+      <span class="muted">Simpan semua input di Info Anggota</span>
+    </div>
 
-<h4>
-  Preview Data Anggota
-  <button class="toggle-btn" onclick="togglePreview()">Toggle Preview</button>
-</h4>
-<div id="previewArea" class="small">Pilih anggota untuk melihat detail...</div>
+    <h4>Info Anggota <button class="toggle-btn" onclick="toggle('infoTbl')">Toggle</button></h4>
+    <table id="infoTbl" class="hidden">
+      <thead><tr><th>Tgl</th><th>ID</th><th>Nama</th><th>+Wajib</th><th>+Sukarela</th><th>Bunga</th><th>Setelah</th><th>Belanja</th><th>Aksi</th></tr></thead>
+      <tbody></tbody>
+    </table>
 
-<h4>
-  Info Anggota
-  <button class="toggle-btn" onclick="toggleTable('tableInfoAnggota')">Toggle Tabel</button>
-</h4>
-
-<!-- SAVE ALL TRANSAKSI -->
-<div style="margin:15px 0;">
-  <button class="btn-save-all" onclick="saveAllInfoAnggota()">Save All (Transaksi)</button>
-  <span class="muted">Simpan semua transaksi di tabel Info Anggota sekaligus</span>
-</div>
-
-<table id="tableInfoAnggota" class="hidden">
-  <thead><tr>
-    <th>Tanggal</th><th>ID</th><th>Nama</th>
-    <th>Tambah Wajib</th><th>Tambah Sukarela</th>
-    <th>Bunga Sukarela</th><th>Sukarela Setelah</th>
-    <th>Belanja</th><th>Aksi</th>
-  </tr></thead>
-  <tbody></tbody>
-</table>
-
-<h4>
-  Riwayat Transaksi
-  <button class="toggle-btn" onclick="toggleTable('tableTransaksi')">Toggle Tabel</button>
-</h4>
-<table id="tableTransaksi" class="hidden">
-  <thead><tr>
-    <th>Tanggal</th><th>ID</th><th>Nama</th>
-    <th>Tambah Wajib</th><th>Tambah Sukarela</th>
-    <th>Bunga Sukarela</th><th>Sukarela Setelah</th>
-    <th>Belanja</th>
-  </tr></thead>
-  <tbody></tbody>
-</table>
-</div>
-
-<!-- ===== SHU (LENGKAP, SAMA PERSIS DENGAN ASLI) ===== -->
-<div id="tab-shu" style="display:none">
-<h3>Kalkulasi SHU (Sisa Hasil Usaha)</h3>
-
-<div class="info-box">
-  <strong>Cara Hitung SHU:</strong><br>
-  • <strong>SHU Modal:</strong> Berdasarkan total simpanan pokok + wajib per anggota<br>
-  • <strong>SHU Belanja:</strong> Hanya dibagi ke anggota yang belanja, proporsi sesuai belanja masing-masing<br>
-  • <strong>Pos Lain:</strong> Cadangan, pengurus, pengawas, dll. dibagi sesuai persentase
-</div>
-
-<div class="row3">
-  <div><label>Periode</label>
-    <select id="shuPeriode" onchange="shuPeriodeChange()">
-      <option value="bulanan">Bulanan</option>
-      <option value="tahunan">Tahunan</option>
-    </select>
+    <h4>Riwayat <button class="toggle-btn" onclick="toggle('histTbl')">Toggle</button></h4>
+    <table id="histTbl" class="hidden">
+      <thead><tr><th>Tgl</th><th>ID</th><th>Nama</th><th>+Wajib</th><th>+Sukarela</th><th>Bunga</th><th>Setelah</th><th>Belanja</th></tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
-  <div><label>Bulan/Tahun</label><input type="month" id="shuBulan"></div>
-  <div><label>Total SHU/Profit (Rp)</label><input type="number" id="shuProfit" value="10000000" step="100000" min="0"></div>
-</div>
 
-<h4>Persentase Pembagian SHU (%)</h4>
-<div class="row3">
-  <div><label>Modal/Simpanan</label><input type="number" id="persModal" value="40" step="0.1" min="0" max="100"></div>
-  <div><label>Belanja</label><input type="number" id="persBelanja" value="5" step="0.1" min="0" max="100"></div>
-  <div><label>Cadangan</label><input type="number" id="persCadangan" value="20" step="0.1" min="0" max="100"></div>
-  <div><label>Pengurus</label><input type="number" id="persPengurus" value="5" step="0.1" min="0" max="100"></div>
-  <div><label>Pengawas</label><input type="number" id="persPengawas" value="5" step="0.1" min="0" max="100"></div>
-</div>
-<div class="row3">
-  <div><label>Karyawan</label><input type="number" id="persKaryawan" value="5" step="0.1" min="0" max="100"></div>
-  <div><label>Sosial</label><input type="number" id="persSosial" value="5" step="0.1" min="0" max="100"></div>
-  <div><label>Pendidikan</label><input type="number" id="persPendidikan" value="5" step="0.1" min="0" max="100"></div>
-  <div><label>Dana Pembangunan</label><input type="number" id="persDanaBangun" value="10" step="0.1" min="0" max="100"></div>
-</div>
-
-<div>
-  <button class="btn-success" onclick="hitungSHU()">Hitung SHU</button>
-  <span class="muted" id="totalPersen"></span>
-</div>
-
-<h4>SHU per Anggota 
-  <button class="toggle-btn" onclick="toggleTable('tableSHU')">Toggle</button>
-</h4>
-<table id="tableSHU">
-  <thead><tr>
-    <th>ID</th><th>Nama</th>
-    <th>Total Modal (Pokok+Wajib)</th><th>Total Belanja</th>
-    <th>SHU dari Modal</th><th>SHU dari Belanja</th>
-    <th>Total SHU Diterima</th>
-  </tr></thead>
-  <tbody></tbody>
-</table>
-
-<h4>Pembagian SHU Pos Lainnya</h4>
-<table id="tableSHUPos">
-  <thead><tr><th>Pos</th><th>Persentase</th><th>Nominal (Rp)</th></tr></thead>
-  <tbody></tbody>
-</table>
-
-<div>
-  <button class="btn-success" onclick="exportSHUToExcel()">Export SHU ke Excel</button>
-</div>
-</div>
-
+  <!-- TAB SHU -->
+  <div id="shu" class="tab">
+    <h3>Kalkulasi SHU</h3>
+    <div class="info-box">SHU dibagi berdasarkan modal & belanja. Pos lain sesuai %.</div>
+    <div class="row">
+      <div><label>Periode</label><select id="periode" onchange="changePeriod()"><option value="bulan">Bulanan</option><option value="tahun">Tahunan</option></select></div>
+      <div><label>Bulan/Tahun</label><input type="month" id="bulanSHU"></div>
+      <div><label>Total SHU</label><input type="number" id="totalSHU" value="10000000" min="0"></div>
+    </div>
+    <h4>Persentase (%)</h4>
+    <div class="row">
+      <div><label>Modal</label><input type="number" id="pModal" value="40" step="0.1"></div>
+      <div><label>Belanja</label><input type="number" id="pBelanja" value="5" step="0.1"></div>
+      <div><label>Cadangan</label><input type="number" id="pCadangan" value="20" step="0.1"></div>
+    </div>
+    <div>
+      <button class="btn-success" onclick="hitungSHU()">Hitung SHU</button>
+      <span id="totalPct" class="muted"></span>
+    </div>
+    <table id="tblSHU"><thead><tr><th>ID</th><th>Nama</th><th>Modal</th><th>Belanja</th><th>SHU Modal</th><th>SHU Belanja</th><th>Total</th></tr></thead><tbody></tbody></table>
+    <table id="tblPos"><thead><tr><th>Pos</th><th>%</th><th>Nominal</th></tr></thead><tbody></tbody></table>
+    <button class="btn-success" onclick="exportSHU()">Export SHU</button>
+  </div>
 </div>
 
 <script>
-// ===== DATA GLOBAL =====
-let anggotaList = [];
-let transaksiList = [];
-const BUNGA_SUKARELA = 0.5;
-const STORAGE_KEY = 'kmp_pasirgombong_v171_data';
+const STORAGE = 'kmp_v172';
+let members = [], transactions = [];
 
-// ===== STORAGE & INIT =====
-function saveToStorage() {
-  try {
-    const data = { anggotaList: [...anggotaList], transaksiList: [...transaksiList] };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) { console.warn('Gagal simpan localStorage', e); }
-}
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    const data = JSON.parse(raw);
-    anggotaList = Array.isArray(data.anggotaList) ? data.anggotaList.map(a => ({
-      ...a, lastInterestDate: a.lastInterestDate || a.tgl, shu: a.shu || 0
-    })) : [];
-    transaksiList = Array.isArray(data.transaksiList) ? data.transaksiList : [];
-
-    anggotaList.forEach(a => {
-      const latest = transaksiList.filter(t => t.id === a.id)
-        .reduce((l, t) => new Date(t.tgl) > new Date(l) ? t.tgl : l, a.tgl);
-      a.lastInterestDate = latest;
-    });
-    return true;
-  } catch (e) {
-    console.error('Data lokal rusak', e);
-    alert('Data lokal rusak. Memulai ulang.');
-    localStorage.removeItem(STORAGE_KEY);
-    return false;
-  }
-}
-
-function resetAllData() {
-  if (confirm('Yakin ingin HAPUS SEMUA DATA? Ini tidak bisa dikembalikan!')) {
-    anggotaList = [];
-    transaksiList = [];
-    localStorage.removeItem(STORAGE_KEY);
-    renderTableAnggota();
-    updateSelectAnggota();
-    renderTableTransaksi();
-    renderTableInfoAnggota();
-    document.querySelector('#tableSHU tbody').innerHTML = '';
-    document.querySelector('#tableSHUPos tbody').innerHTML = '';
-    alert('Semua data telah direset!');
-  }
-}
-
+// INIT
 document.addEventListener('DOMContentLoaded', () => {
-  const today = new Date();
-  document.getElementById('daftarTanggal').valueAsDate = today;
-  document.getElementById('trxTanggal').valueAsDate = today;
-  document.getElementById('shuBulan').value = today.toISOString().slice(0, 7);
-
-  loadFromStorage();
-  renderTableAnggota();
-  updateSelectAnggota();
-  renderTableTransaksi();
-  renderTableInfoAnggota();
+  const today = new Date().toISOString().split('T')[0];
+  ['tglDaftar', 'tglTrx'].forEach(id => document.getElementById(id).value = today);
+  document.getElementById('bulanSHU').value = today.slice(0,7);
+  loadData();
+  renderAll();
 });
 
-// ===== UTILITY =====
-function showTab(tab) {
-  ['anggota','transaksi','shu'].forEach(t => {
-    const el = document.getElementById(`tab-${t}`);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
+// TAB
+function openTab(tab) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.getElementById(tab).classList.add('active'); }
+function toggle(id) { document.getElementById(id).classList.toggle('hidden'); }
+
+// STORAGE
+function saveData() { localStorage.setItem(STORAGE, JSON.stringify({members, transactions})); }
+function loadData() {
+  const data = JSON.parse(localStorage.getItem(STORAGE) || '{}');
+  members = data.members || []; transactions = data.transactions || [];
+}
+function clearAll() { if(confirm('Hapus semua data?')) { localStorage.removeItem(STORAGE); members = []; transactions = []; renderAll(); } }
+
+// RENDER
+function renderAll() {
+  renderMembers(); renderSelect(); renderInfo(); renderHistory(); renderSHU();
+}
+function formatRp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+// === ANGGOTA ===
+function addMember() {
+  const tgl = document.getElementById('tglDaftar').value;
+  let id = document.getElementById('idAnggota').value.trim() || 'A' + String(members.length+1).padStart(3,'0');
+  const nama = document.getElementById('namaAnggota').value.trim();
+  const pokok = +document.getElementById('pokok').value || 0;
+  const wajib = +document.getElementById('wajib').value || 0;
+  const sukarela = +document.getElementById('sukarela').value || 0;
+
+  if (!tgl || !nama || pokok <= 0 || wajib <= 0) return alert('Data tidak lengkap!');
+  if (members.some(m => m.id === id)) return alert('ID sudah ada!');
+
+  const member = { tgl, id, nama, pokok, wajib, sukarela, shu: 0, total: pokok + wajib + sukarela };
+  members.push(member);
+  transactions.push({ tgl, id, nama, wajib, sukarela, bunga: 0, setelah: sukarela, belanja: 0, ket: 'Daftar' });
+  saveData(); renderAll();
+  document.getElementById('idAnggota').value = ''; document.getElementById('namaAnggota').value = '';
+}
+
+function renderMembers() {
+  const tbody = document.querySelector('#tblAnggota tbody');
+  tbody.innerHTML = '';
+  members.forEach((m, i) => {
+    tbody.innerHTML += `<tr>
+      <td onclick="edit(${i},'tgl',this)">${m.tgl}</td>
+      <td>${m.id}</td>
+      <td onclick="edit(${i},'nama',this)">${m.nama}</td>
+      <td onclick="edit(${i},'pokok',this)">${formatRp(m.pokok)}</td>
+      <td onclick="edit(${i},'wajib',this)">${formatRp(m.wajib)}</td>
+      <td onclick="edit(${i},'sukarela',this)">${formatRp(m.sukarela)}</td>
+      <td onclick="edit(${i},'shu',this)">${formatRp(m.shu)}</td>
+      <td><strong>${formatRp(m.total + m.shu)}</strong></td>
+      <td><button class="btn-success" onclick="saveMember(${i})">Simpan</button> <button class="btn-danger" onclick="delMember(${i})">Hapus</button></td>
+    </tr>`;
   });
 }
-function toggleSection(id) { const el = document.getElementById(id); if (el) el.classList.toggle('hidden'); }
-function toggleTable(id) { const el = document.getElementById(id); if (el) el.classList.toggle('hidden'); }
-function togglePreview() { const el = document.getElementById('previewArea'); if (el) el.classList.toggle('hidden'); }
-function formatRupiah(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
 
-function triggerSave() {
-  saveToStorage();
-  renderTableAnggota();
-  updateSelectAnggota();
-  renderTableTransaksi();
-  renderTableInfoAnggota();
+function edit(i, field, cell) {
+  const val = members[i][field];
+  const type = field === 'tgl' ? 'date' : 'text';
+  cell.innerHTML = `<input type="${type}" value="${val}" id="e-${field}-${i}" style="width:100%">`;
 }
 
-// ===== SAVE ALL BARU =====
-function saveAllAnggota() {
-  let updated = 0;
-  anggotaList.forEach((a, i) => {
-    const inputs = ['tgl','nama','pokok','wajib','sukarela','shu'].map(f => document.getElementById(`edit-${f}-${i}`));
-    if (!inputs.some(inp => inp)) return;
-
-    const [tglInp, namaInp, pokokInp, wajibInp, sukarelaInp, shuInp] = inputs;
-    const tgl = tglInp?.value || a.tgl;
-    const nama = namaInp?.value?.trim() || a.nama;
-    const pokok = +pokokInp?.value || a.pokok;
-    const wajib = +wajibInp?.value || a.wajib;
-    const sukarela = +sukarelaInp?.value || a.sukarela;
-    const shu = +shuInp?.value || a.shu;
-
-    if (!nama || pokok <= 0 || wajib <= 0) return;
-
-    a.tgl = tgl; a.nama = nama; a.pokok = pokok; a.wajib = wajib; a.sukarela = sukarela; a.shu = shu;
-    a.totalDana = pokok + wajib + sukarela; a.lastInterestDate = tgl;
-
-    const init = transaksiList.find(t => t.id === a.id && t.keterangan === 'Pendaftaran Awal');
-    if (init) { init.tgl = tgl; init.nama = nama; init.tambahWajib = wajib; init.tambahSukarela = sukarela; init.sukarelaSetelah = sukarela; }
-    updated++;
+function saveMember(i) {
+  const m = members[i];
+  const fields = ['tgl','nama','pokok','wajib','sukarela','shu'];
+  fields.forEach(f => {
+    const inp = document.getElementById(`e-${f}-${i}`);
+    if (inp) m[f] = f === 'tgl' ? inp.value : f === 'nama' ? inp.value.trim() : +inp.value || 0;
   });
-
-  if (updated > 0) { triggerSave(); alert(`Berhasil menyimpan ${updated} perubahan!`); }
-  else { alert('Tidak ada perubahan.'); }
+  if (!m.nama || m.pokok <= 0 || m.wajib <= 0) return alert('Data tidak valid!');
+  m.total = m.pokok + m.wajib + m.sukarela;
+  saveData(); renderAll();
 }
 
-function saveAllInfoAnggota() {
-  const tgl = document.getElementById('trxTanggal').value;
-  if (!tgl) { alert('Isi tanggal transaksi dulu!'); return; }
+function delMember(i) {
+  if (!confirm('Hapus?')) return;
+  const id = members[i].id;
+  members.splice(i,1);
+  transactions = transactions.filter(t => t.id !== id);
+  saveData(); renderAll();
+}
+
+function saveAllMembers() {
   let saved = 0;
-  anggotaList.forEach((a, i) => {
-    const w = +document.getElementById(`info-tambahWajib-${i}`)?.value || 0;
-    const s = +document.getElementById(`info-tambahSukarela-${i}`)?.value || 0;
-    const b = +document.getElementById(`info-belanja-${i}`)?.value || 0;
-    if (w === 0 && s === 0 && b === 0) return;
-
-    a.wajib += w; a.sukarela += s; a.totalDana = a.pokok + a.wajib + a.sukarela; a.lastInterestDate = tgl;
-    transaksiList.push({ tgl, id: a.id, nama: a.nama, tambahWajib: w, tambahSukarela: s,
-      bunga: 0, sukarelaSetelah: a.sukarela, belanja: b, keterangan: 'Info Anggota' });
-    saved++;
+  members.forEach((m, i) => {
+    const inputs = ['tgl','nama','pokok','wajib','sukarela','shu'].map(f => document.getElementById(`e-${f}-${i}`));
+    if (!inputs.some(x => x)) return;
+    inputs.forEach((inp, j) => { if (inp) m[ ['tgl','nama','pokok','wajib','sukarela','shu'][j] ] = inp.value; });
+    if (m.nama && m.pokok > 0 && m.wajib > 0) { m.total = m.pokok + m.wajib + m.sukarela; saved++; }
   });
-  if (saved > 0) { triggerSave(); alert(`Berhasil menyimpan ${saved} transaksi!`); }
-  else { alert('Tidak ada transaksi.'); }
+  if (saved) { saveData(); renderAll(); alert(`Tersimpan ${saved} anggota!`); }
+  else alert('Tidak ada perubahan.');
 }
 
-// ===== SEMUA FUNGSI LAIN (SAMA PERSIS DENGAN KODE ASLI) =====
-function tambahAnggota() { /* ... sama seperti asli ... */ }
-function renderTableAnggota() { /* ... sama ... */ }
-function editCell(i, field, cell) { /* ... sama ... */ }
-function saveEdit(i) { /* ... sama ... */ }
-function hapusAnggota(i) { /* ... sama ... */ }
-function updateSelectAnggota() { /* ... sama ... */ }
-function updatePreviewAnggota() { /* ... sama ... */ }
-function prosesTransaksi() { /* ... sama ... */ }
-function updateAllMembers() { /* ... sama ... */ }
-function applyInterestOneMonth() { /* ... sama ... */ }
-function applyInterestCustomMonths() { /* ... sama ... */ }
-function renderTableTransaksi() { /* ... sama ... */ }
-function renderTableInfoAnggota() { /* ... sama ... */ }
-function saveInfoAnggota(i) { /* ... sama ... */ }
-function deleteInfoAnggota(i) { /* ... sama ... */ }
-function hitungSHU() { /* ... sama seperti asli ... */ }
-function exportToExcel() { /* ... sama ... */ }
-function exportSHUToExcel() { /* ... sama ... */ }
+// === TRANSAKSI ===
+function renderSelect() {
+  const sel = document.getElementById('selMember');
+  sel.innerHTML = '<option value="">-- Pilih --</option>';
+  members.forEach((m,i) => sel.innerHTML += `<option value="${i}">${m.id} - ${m.nama}</option>`);
+}
 
+function showPreview() {
+  const i = document.getElementById('selMember').value;
+  const div = document.getElementById('preview');
+  if (i === '') { div.innerHTML = 'Pilih anggota...'; return; }
+  const m = members[i];
+  div.innerHTML = `<strong>${m.nama}</strong><br>Pokok: ${formatRp(m.pokok)} | Wajib: ${formatRp(m.wajib)} | Sukarela: ${formatRp(m.sukarela)} | SHU: ${formatRp(m.shu)} | <strong>Total: ${formatRp(m.total + m.shu)}</strong>`;
+}
+
+function addTransaction() {
+  const i = document.getElementById('selMember').value;
+  const tgl = document.getElementById('tglTrx').value;
+  const w = +document.getElementById('addWajib').value || 0;
+  const s = +document.getElementById('addSukarela').value || 0;
+  const b = +document.getElementById('belanja').value || 0;
+  if (i === '' || !tgl || (!w && !s && !b)) return alert('Isi data!');
+  const m = members[i];
+  const bunga = m.sukarela * 0.005;
+  m.sukarela += bunga + s; m.wajib += w; m.total = m.pokok + m.wajib + m.sukarela;
+  transactions.push({ tgl, id: m.id, nama: m.nama, wajib: w, sukarela: s, bunga, setelah: m.sukarela, belanja: b, ket: 'Transaksi' });
+  saveData(); renderAll(); resetInputs();
+}
+
+function resetInputs() { ['addWajib','addSukarela','belanja'].forEach(id => document.getElementById(id).value = 0); }
+
+function showAllMembers() {
+  const div = document.getElementById('preview');
+  let html = '<h4>Semua Anggota</h4>';
+  members.forEach(m => html += `<div style="border-bottom:1px solid #eee;padding:8px;"><strong>${m.nama} (${m.id})</strong><br>Pokok: ${formatRp(m.pokok)} | Wajib: ${formatRp(m.wajib)} | Sukarela: ${formatRp(m.sukarela)} | SHU: ${formatRp(m.shu)} | Total: <strong>${formatRp(m.total + m.shu)}</strong></div>`);
+  div.innerHTML = html;
+}
+
+function calcInterest(months) {
+  const tgl = document.getElementById('tglTrx').value;
+  if (!tgl) return alert('Isi tanggal!');
+  let cnt = 0;
+  members.forEach(m => {
+    if (m.sukarela > 0) {
+      const b = m.sukarela * 0.005;
+      m.sukarela += b; m.total += b;
+      transactions.push({ tgl, id: m.id, nama: m.nama, wajib: 0, sukarela: 0, bunga: b, setelah: m.sukarela, belanja: 0, ket: 'Bunga' });
+      cnt++;
+    }
+  });
+  saveData(); renderAll(); alert(`Bunga ${months} bulan: ${cnt} anggota`);
+}
+
+function calcInterestCustom() {
+  const months = +document.getElementById('bulanCustom').value || 1;
+  calcInterest(months);
+}
+
+function renderInfo() {
+  const tbody = document.querySelector('#infoTbl tbody');
+  tbody.innerHTML = '';
+  members.forEach((m,i) => {
+    const last = transactions.filter(t => t.id === m.id).slice(-1)[0] || { tgl: m.tgl, wajib: 0, sukarela: 0, bunga: 0, setelah: m.sukarela, belanja: 0 };
+    tbody.innerHTML += `<tr>
+      <td>${last.tgl}</td><td>${m.id}</td><td>${m.nama}</td>
+      <td><input type="number" id="iw-${i}" value="${last.wajib}" step="1000"></td>
+      <td><input type="number" id="is-${i}" value="${last.sukarela}" step="1000"></td>
+      <td>${formatRp(last.bunga)}</td><td>${formatRp(last.setelah)}</td>
+      <td><input type="number" id="ib-${i}" value="${last.belanja}" step="1000"></td>
+      <td><button class="btn-success" onclick="saveTrx(${i})">Simpan</button></td>
+    </tr>`;
+  });
+}
+
+function saveTrx(i) {
+  const tgl = document.getElementById('tglTrx').value;
+  const w = +document.getElementById(`iw-${i}`).value || 0;
+  const s = +document.getElementById(`is-${i}`).value || 0;
+  const b = +document.getElementById(`ib-${i}`).value || 0;
+  if (!tgl || (!w && !s && !b)) return alert('Isi minimal satu!');
+  const m = members[i];
+  m.wajib += w; m.sukarela += s; m.total = m.pokok + m.wajib + m.sukarela;
+  transactions.push({ tgl, id: m.id, nama: m.nama, wajib: w, sukarela: s, bunga: 0, setelah: m.sukarela, belanja: b, ket: 'Manual' });
+  saveData(); renderAll();
+}
+
+function saveAllTransactions() {
+  const tgl = document.getElementById('tglTrx').value;
+  if (!tgl) return alert('Isi tanggal!');
+  let saved = 0;
+  members.forEach((m,i) => {
+    const w = +document.getElementById(`iw-${i}`)?.value || 0;
+    const s = +document.getElementById(`is-${i}`)?.value || 0;
+    const b = +document.getElementById(`ib-${i}`)?.value || 0;
+    if (w || s || b) {
+      m.wajib += w; m.sukarela += s; m.total = m.pokok + m.wajib + m.sukarela;
+      transactions.push({ tgl, id: m.id, nama: m.nama, wajib: w, sukarela: s, bunga: 0, setelah: m.sukarela, belanja: b, ket: 'Save All' });
+      saved++;
+    }
+  });
+  if (saved) { saveData(); renderAll(); alert(`Tersimpan ${saved} transaksi!`); }
+  else alert('Tidak ada input.');
+}
+
+function renderHistory() {
+  const tbody = document.querySelector('#histTbl tbody');
+  tbody.innerHTML = '';
+  [...transactions].reverse().forEach(t => {
+    tbody.innerHTML += `<tr>
+      <td>${t.tgl}</td><td>${t.id}</td><td>${t.nama}</td>
+      <td>${formatRp(t.wajib)}</td><td>${formatRp(t.sukarela)}</td>
+      <td>${formatRp(t.bunga)}</td><td>${formatRp(t.setelah)}</td>
+      <td>${formatRp(t.belanja)}</td>
+    </tr>`;
+  });
+}
+
+// === SHU ===
+function changePeriod() {
+  const p = document.getElementById('periode').value;
+  const inp = document.getElementById('bulanSHU');
+  if (p === 'tahun') { inp.type = 'number'; inp.placeholder = '2025'; inp.value = new Date().getFullYear(); }
+  else { inp.type = 'month'; inp.value = new Date().toISOString().slice(0,7); }
+}
+
+function hitungSHU() {
+  const total = +document.getElementById('totalSHU').value || 0;
+  if (total <= 0) return alert('Isi total SHU!');
+  const pct = { modal: +document.getElementById('pModal').value, belanja: +document.getElementById('pBelanja').value, cadangan: +document.getElementById('pCadangan').value };
+  const sum = Object.values(pct).reduce((a,b)=>a+b,0);
+  document.getElementById('totalPct').textContent = `Total: ${sum}%`;
+  if (Math.abs(sum-100)>0.1) return alert('Total % harus 100!');
+
+  const shuModal = total * pct.modal / 100;
+  const totalModal = members.reduce((s,m)=>s+m.pokok+m.wajib,0);
+  const shuBelanja = total * pct.belanja / 100;
+  const belanjaTotal = transactions.reduce((s,t)=>s+t.belanja,0);
+  const belanjaById = {}; transactions.forEach(t=> belanjaById[t.id] = (belanjaById[t.id]||0) + t.belanja);
+
+  const tbody = document.querySelector('#tblSHU tbody'); tbody.innerHTML = '';
+  members.forEach(m => {
+    const modal = m.pokok + m.wajib;
+    const sm = totalModal > 0 ? (modal/totalModal)*shuModal : 0;
+    const bel = belanjaById[m.id] || 0;
+    const sb = belanjaTotal > 0 && bel > 0 ? (bel/belanjaTotal)*shuBelanja : 0;
+    const tot = sm + sb;
+    m.shu = tot;
+    tbody.innerHTML += `<tr><td>${m.id}</td><td>${m.nama}</td><td>${formatRp(modal)}</td><td>${formatRp(bel)}</td><td>${formatRp(sm)}</td><td>${formatRp(sb)}</td><td><strong>${formatRp(tot)}</strong></td></tr>`;
+  });
+
+  const posTbody = document.querySelector('#tblPos tbody'); posTbody.innerHTML = '';
+  ['Cadangan'].forEach(pos => {
+    const val = total * pct.cadangan / 100;
+    posTbody.innerHTML += `<tr><td>${pos}</td><td>${pct.cadangan}%</td><td>${formatRp(val)}</td></tr>`;
+  });
+  saveData(); renderAll();
+}
+
+// === EXPORT ===
+function exportAll() {
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.json_to_sheet(members.map(m=>({Tanggal:m.tgl,ID:m.id,Nama:m.nama,Pokok:m.pokok,Wajib:m.wajib,Sukarela:m.sukarela,SHU:m.shu,Total:m.total+m.shu})));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Anggota');
+  const ws2 = XLSX.utils.json_to_sheet(transactions.map(t=>({Tanggal:t.tgl,ID:t.id,Nama:t.nama,'+Wajib':t.wajib,'+Sukarela':t.sukarela,Bunga:t.bunga,Setelah:t.setelah,Belanja:t.belanja})));
+  XLSX.utils.book_append_sheet(wb, ws2, 'Transaksi');
+  XLSX.writeFile(wb, 'Koperasi_Full.xlsx');
+}
+
+function exportSHU() {
+  const wb = XLSX.utils.book_new();
+  const rows = Array.from(document.querySelectorAll('#tblSHU tbody tr')).map(tr => {
+    const cells = tr.cells;
+    return {ID:cells[0].textContent, Nama:cells[1].textContent, Modal:+cells[2].textContent.replace(/\D/g,''), Belanja:+cells[3].textContent.replace(/\D/g,''), 'SHU Modal':+cells[4].textContent.replace(/\D/g,''), 'SHU Belanja':+cells[5].textContent.replace(/\D/g,''), Total:+cells[6].textContent.replace(/\D/g,'')};
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb, ws, 'SHU');
+  XLSX.writeFile(wb, 'Laporan_SHU.xlsx');
+}
+
+// IMPORT
+document.getElementById('fileImport').onchange = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = new Uint8Array(ev.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+      json.forEach(row => {
+        if (row.ID && row.Nama && row.Pokok >= 0 && row.Wajib >= 0) {
+          const id = row.ID;
+          if (members.some(m => m.id === id)) return;
+          const m = { tgl: row.Tanggal || new Date().toISOString().slice(0,10), id, nama: row.Nama, pokok: +row.Pokok, wajib: +row.Wajib, sukarela: +row.Sukarela || 0, shu: 0, total: 0 };
+          m.total = m.pokok + m.wajib + m.sukarela;
+          members.push(m);
+        }
+      });
+      saveData(); renderAll(); alert('Import sukses!');
+    } catch (err) { alert('Gagal import: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+};
 </script>
 </body>
 </html>
