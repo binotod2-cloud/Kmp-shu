@@ -48,10 +48,9 @@ button:hover { background:#0b7dda; }
 
 <!-- ===== DATA ANGGOTA ===== -->
 <div id="tab-anggota">
-<h3>Data Anggota 
-  <button class="toggle-btn" onclick="toggleSection('section-daftar-anggota')">Toggle</button>
-</h3>
-<div id="section-daftar-anggota">
+<h3>Data Anggota</h3>
+
+<!-- Form Tambah Anggota (Selalu Tampil) -->
 <div class="row">
   <div><label>Tanggal Daftar</label><input type="date" id="daftarTanggal"></div>
   <div><label>ID Anggota</label><input type="text" id="daftarId" placeholder="Auto generate"></div>
@@ -71,15 +70,20 @@ button:hover { background:#0b7dda; }
   <span class="muted">* Pokok & Wajib wajib diisi (min Rp 1), Sukarela boleh 0</span>
 </div>
 
-<h4>Daftar Anggota</h4>
-<table id="tableAnggota">
-  <thead><tr>
-    <th>Tanggal</th><th>ID</th><th>Nama</th>
-    <th>Simpanan Pokok</th><th>Simpanan Wajib</th><th>Simpanan Sukarela</th>
-    <th>SHU</th><th>Total Dana</th><th>Aksi</th>
-  </tr></thead>
-  <tbody></tbody>
-</table>
+<!-- Tabel Daftar Anggota dengan Toggle di Judul -->
+<h4>
+  Daftar Anggota 
+  <button class="toggle-btn" onclick="toggleSection('section-tabel-anggota')">Toggle</button>
+</h4>
+<div id="section-tabel-anggota">
+  <table id="tableAnggota">
+    <thead><tr>
+      <th>Tanggal</th><th>ID</th><th>Nama</th>
+      <th>Simpanan Pokok</th><th>Simpanan Wajib</th><th>Simpanan Sukarela</th>
+      <th>SHU</th><th>Total Dana</th><th>Aksi</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
 </div>
 </div>
 
