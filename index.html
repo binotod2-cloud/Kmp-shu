@@ -33,6 +33,9 @@ button:hover { background:#0b7dda; }
 .hidden { display:none; }
 .reset-btn { background:#f44336; margin-top:10px; }
 .reset-btn:hover { background:#d32f2f; }
+/* TAMBAHAN: Style tombol Save All */
+.btn-save-all { background:#FF5722; color:white; margin-top:10px; padding:10px 20px; font-weight:bold; }
+.btn-save-all:hover { background:#e64a19; }
 </style>
 </head>
 <body>
@@ -84,6 +87,10 @@ button:hover { background:#0b7dda; }
       </tr></thead>
       <tbody></tbody>
     </table>
+    <!-- TAMBAHAN: Tombol Save All untuk Tabel Anggota -->
+    <div style="text-align:center; margin-top:15px;">
+      <button class="btn-save-all" onclick="saveAllAnggota()">Save All (Data Anggota)</button>
+    </div>
   </div>
 </div>
 
@@ -139,6 +146,10 @@ button:hover { background:#0b7dda; }
   </tr></thead>
   <tbody></tbody>
 </table>
+<!-- TAMBAHAN: Tombol Save All untuk Tabel Info Anggota -->
+<div style="text-align:center; margin-top:15px;">
+  <button class="btn-save-all" onclick="saveAllInfoAnggota()">Save All (Info Anggota)</button>
+</div>
 
 <h4>
   Riwayat Transaksi
@@ -731,6 +742,86 @@ function exportSHUToExcel() {
 
   XLSX.writeFile(wb, `Laporan_SHU_${per}_${bln}.xlsx`);
 }
+
+// ===== TAMBAHAN: FUNGSI SAVE ALL =====
+
+// Save All untuk Tabel Data Anggota
+function saveAllAnggota() {
+  let changed = false;
+  anggotaList.forEach((a, i) => {
+    const inputs = [
+      document.getElementById(`edit-tgl-${i}`),
+      document.getElementById(`edit-nama-${i}`),
+      document.getElementById(`edit-pokok-${i}`),
+      document.getElementById(`edit-wajib-${i}`),
+      document.getElementById(`edit-sukarela-${i}`),
+      document.getElementById(`edit-shu-${i}`)
+    ];
+    if (inputs.some(inp => inp)) {
+      const tgl = inputs[0]?.value || a.tgl;
+      const nama = inputs[1]?.value?.trim() || a.nama;
+      const pokok = +inputs[2]?.value || a.pokok;
+      const wajib = +inputs[3]?.value || a.wajib;
+      const sukarela = +inputs[4]?.value || a.sukarela;
+      const shu = +inputs[5]?.value || a.shu;
+
+      if (nama && pokok > 0 && wajib > 0) {
+        a.tgl = tgl; a.nama = nama; a.pokok = pokok; a.wajib = wajib; a.sukarela = sukarela; a.shu = shu;
+        a.totalDana = pokok + wajib + sukarela; a.lastInterestDate = tgl;
+
+        const init = transaksiList.find(t => t.id === a.id && t.keterangan === 'Pendaftaran Awal');
+        if (init) {
+          init.tgl = tgl; init.nama = nama; init.tambahWajib = wajib; init.tambahSukarela = sukarela; init.sukarelaSetelah = sukarela;
+        }
+        changed = true;
+      }
+    }
+  });
+
+  if (changed) {
+    triggerSave();
+    alert('Semua perubahan di tabel Data Anggota telah disimpan!');
+  } else {
+    alert('Tidak ada perubahan yang terdeteksi atau belum di-edit.');
+  }
+}
+
+// Save All untuk Tabel Info Anggota
+function saveAllInfoAnggota() {
+  const tgl = document.getElementById('trxTanggal').value;
+  if (!tgl) { alert('Isi Tanggal Transaksi terlebih dahulu!'); return; }
+
+  let savedCount = 0;
+  anggotaList.forEach((a, i) => {
+    const w = +document.getElementById(`info-tambahWajib-${i}`)?.value || 0;
+    const s = +document.getElementById(`info-tambahSukarela-${i}`)?.value || 0;
+    const b = +document.getElementById(`info-belanja-${i}`)?.value || 0;
+
+    if (w > 0 || s > 0 || b > 0) {
+      a.wajib += w;
+      a.sukarela += s;
+      a.totalDana = a.pokok + a.wajib + a.sukarela;
+      a.lastInterestDate = tgl;
+
+      transaksiList.push({
+        tgl, id: a.id, nama: a.nama,
+        tambahWajib: w, tambahSukarela: s,
+        bunga: 0, sukarelaSetelah: a.sukarela,
+        belanja: b, keterangan: 'Info Anggota'
+      });
+      savedCount++;
+    }
+  });
+
+  if (savedCount > 0) {
+    triggerSave();
+    renderTableInfoAnggota();
+    alert(`Berhasil menyimpan ${savedCount} transaksi dari Info Anggota!`);
+  } else {
+    alert('Tidak ada transaksi yang diisi untuk disimpan.');
+  }
+}
+
 </script>
 </body>
 </html>
