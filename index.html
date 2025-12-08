@@ -150,11 +150,11 @@ button:hover { background:#0b7dda; }
   </div>
   <div class="row">
     <div><label>Nama Anggota</label><input type="text" id="daftarNama"></div>
-    <div><label>Simpanan Pokok (Rp)</label><input type="number" id="daftarPokok" value="100000" min="1" step="1000"></div>
+    <div><label>Simpanan Pokok (Rp)</label><input type="text" id="daftarPokok" value="100000" class="currency-input" placeholder="100.000"></div>
   </div>
   <div class="row">
-    <div><label>Simpanan Wajib Awal (Rp)</label><input type="number" id="daftarWajib" value="50000" min="1" step="1000"></div>
-    <div><label>Simpanan Sukarela Awal (Rp)</label><input type="number" id="daftarSukarela" value="0" min="0" step="1000"></div>
+    <div><label>Simpanan Wajib Awal (Rp)</label><input type="text" id="daftarWajib" value="50000" class="currency-input" placeholder="50.000"></div>
+    <div><label>Simpanan Sukarela Awal (Rp)</label><input type="text" id="daftarSukarela" value="0" class="currency-input" placeholder="0"></div>
   </div>
   <div>
     <button class="btn-success" onclick="tambahAnggota()">Tambah Anggota</button>
@@ -201,9 +201,9 @@ button:hover { background:#0b7dda; }
 </div>
 
 <div class="row3">
-  <div><label>Tambah Simpanan Wajib (Rp)</label><input type="number" id="inputTambahWajib" value="0" step="1000" min="0" placeholder="0"></div>
-  <div><label>Tambah Simpanan Sukarela (Rp)</label><input type="number" id="inputTambahSukarela" value="0" step="1000" min="0" placeholder="0"></div>
-  <div><label>Belanja di Koperasi (Rp)</label><input type="number" id="inputBelanja" value="0" step="1000" min="0" placeholder="0"></div>
+  <div><label>Tambah Simpanan Wajib (Rp)</label><input type="text" id="inputTambahWajib" value="0" class="currency-input" placeholder="0"></div>
+  <div><label>Tambah Simpanan Sukarela (Rp)</label><input type="text" id="inputTambahSukarela" value="0" class="currency-input" placeholder="0"></div>
+  <div><label>Poin Belanja di Koperasi (Rp)</label><input type="text" id="inputBelanja" value="0" class="currency-input" placeholder="0"></div>
 </div>
 
 <div>
@@ -230,7 +230,7 @@ button:hover { background:#0b7dda; }
     <th>Tambah Wajib</th><th>Tambah Sukarela</th>
     <th>Bunga Sukarela</th>
     <th>Sukarela Setelah</th>
-    <th>Belanja</th>
+    <th>Poin Belanja</th>
     <th>Aksi</th>
   </tr></thead>
   <tbody></tbody>
@@ -249,7 +249,7 @@ button:hover { background:#0b7dda; }
     <th>Tambah Wajib</th><th>Tambah Sukarela</th>
     <th>Bunga Sukarela</th>
     <th>Sukarela Setelah</th>
-    <th>Belanja</th>
+    <th>Poin Belanja</th>
   </tr></thead>
   <tbody></tbody>
 </table>
@@ -261,7 +261,7 @@ button:hover { background:#0b7dda; }
 <div class="info-box">
   <strong>Cara Hitung SHU:</strong><br>
   • <strong>SHU Modal:</strong> Berdasarkan total simpanan pokok + wajib per anggota<br>
-  • <strong>SHU Belanja:</strong> Hanya dibagi ke anggota yang belanja, proporsi sesuai belanja masing-masing<br>
+  • <strong>SHU Poin Belanja:</strong> Hanya dibagi ke anggota yang belanja, proporsi sesuai belanja masing-masing<br>
   • <strong>Pos Lain:</strong> Cadangan, pengurus, pengawas, dll. dibagi sesuai persentase
 </div>
 
@@ -273,13 +273,13 @@ button:hover { background:#0b7dda; }
     </select>
   </div>
   <div><label>Bulan/Tahun</label><input type="month" id="shuBulan"></div>
-  <div><label>Total SHU/Profit (Rp)</label><input type="number" id="shuProfit" value="0" step="100000" min="0"></div>
+  <div><label>Total SHU/Profit (Rp)</label><input type="text" id="shuProfit" value="0" class="currency-input" placeholder="0"></div>
 </div>
 
 <h4>Persentase Pembagian SHU (%)</h4>
 <div class="row3">
   <div><label>Modal/Simpanan</label><input type="number" id="persModal" value="40" step="0.1" min="0" max="100"></div>
-  <div><label>Belanja</label><input type="number" id="persBelanja" value="5" step="0.1" min="0" max="100"></div>
+  <div><label>Poin Belanja</label><input type="number" id="persBelanja" value="5" step="0.1" min="0" max="100"></div>
   <div><label>Cadangan</label><input type="number" id="persCadangan" value="20" step="0.1" min="0" max="100"></div>
   <div><label>Pengurus</label><input type="number" id="persPengurus" value="7" step="0.1" min="0" max="100"></div>
   <div><label>Pengawas</label><input type="number" id="persPengawas" value="5" step="0.1" min="0" max="100"></div>
@@ -302,16 +302,16 @@ button:hover { background:#0b7dda; }
 <table id="tableSHU">
   <thead><tr>
     <th>ID</th><th>Nama</th>
-    <th>Total Modal (Pokok+Wajib)</th><th>Total Belanja</th>
-    <th>SHU dari Modal</th><th>SHU dari Belanja</th>
+    <th>Total Modal (Pokok+Wajib)</th><th>Total Poin Belanja</th>
+    <th>SHU dari Modal</th><th>SHU dari Poin Belanja</th>
     <th>Total SHU Diterima</th>
   </tr></thead>
   <tbody></tbody>
 </table>
 
-<h4>Pembagian SHU Pos Lainnya</h4>
+<h4>Pembagian SHU Semua Pos</h4>
 <table id="tableSHUPos">
-  <thead><tr><th>Pos</th><th>Persentase</th><th>Nominal (Rp)</th></tr></thead>
+  <thead><tr><th>Pos SHU</th><th>Persentase</th><th>Nominal (Rp)</th></tr></thead>
   <tbody></tbody>
 </table>
 
@@ -333,7 +333,6 @@ function showCustomModal(title, message, isConfirm = false) {
     document.getElementById('customModal').style.display = 'block';
     modalResolve = resolve;
     
-    // Auto focus confirm button
     setTimeout(() => document.getElementById('modalConfirm').focus(), 100);
   });
 }
@@ -353,14 +352,64 @@ document.getElementById('customModal').onclick = (e) => {
   if (e.target.id === 'customModal') closeModal(false);
 };
 
-// ===== UTILITY FUNCTIONS =====
-function formatRupiah(n) {
-  if (n === null || n === undefined || isNaN(n)) return 'Rp 0';
-  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+// ===== CURRENCY FORMATTING =====
+function formatRupiah(angka) {
+  if (!angka && angka !== 0) return '0';
+  const num = parseInt(angka.toString().replace(/[^\d]/g, '')) || 0;
+  return num.toLocaleString('id-ID');
 }
 
-function formatNumberInput(n) {
-  return n.toLocaleString('id-ID');
+function parseCurrency(value) {
+  if (!value && value !== 0) return 0;
+  return parseInt(value.toString().replace(/[^\d]/g, '')) || 0;
+}
+
+function setupCurrencyInputs() {
+  const currencyInputs = document.querySelectorAll('.currency-input');
+  
+  currencyInputs.forEach(input => {
+    // Format initial value
+    if (input.value && input.value !== '0') {
+      input.value = formatRupiah(input.value);
+    }
+    
+    // Store numeric value in data attribute
+    input.dataset.numeric = parseCurrency(input.value).toString();
+    
+    // On input (while typing)
+    input.addEventListener('input', function(e) {
+      // Allow only numbers and backspace
+      let raw = this.value.replace(/[^\d]/g, '');
+      this.dataset.numeric = raw;
+      
+      // Don't format while typing, only when done
+      if (e.inputType === 'insertText' || e.inputType === 'deleteContentBackward') {
+        this.value = raw;
+      } else {
+        this.value = formatRupiah(raw);
+      }
+    });
+    
+    // On blur (when done/focus out) - format with dots
+    input.addEventListener('blur', function() {
+      const num = parseCurrency(this.value);
+      this.dataset.numeric = num.toString();
+      this.value = num === 0 ? '0' : formatRupiah(num);
+    });
+    
+    // On focus - show raw number for editing
+    input.addEventListener('focus', function() {
+      const num = this.dataset.numeric || '0';
+      this.value = num;
+      this.select();
+    });
+  });
+}
+
+function getCurrencyValue(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return 0;
+  return parseCurrency(input.dataset.numeric || input.value);
 }
 
 // ===== DATA GLOBAL =====
@@ -441,9 +490,9 @@ async function confirmImport() {
 async function confirmTransaksi() {
   const i = document.getElementById('selAnggota').value;
   const tgl = document.getElementById('trxTanggal').value;
-  const w = +document.getElementById('inputTambahWajib').value || 0;
-  const s = +document.getElementById('inputTambahSukarela').value || 0;
-  const b = +document.getElementById('inputBelanja').value || 0;
+  const w = getCurrencyValue('inputTambahWajib');
+  const s = getCurrencyValue('inputTambahSukarela');
+  const b = getCurrencyValue('inputBelanja');
   
   if (i==='' || !tgl || (w===0 && s===0 && b===0)) {
     await showCustomModal('Peringatan', 'Data tidak lengkap!<br>Isi minimal satu transaksi.');
@@ -459,7 +508,7 @@ async function confirmTransaksi() {
     `Tanggal: ${tgl}<br>` +
     `Tambah Wajib: ${formatRupiah(w)}<br>` +
     `Tambah Sukarela: ${formatRupiah(s)}<br>` +
-    `Belanja: ${formatRupiah(b)}<br><br>` +
+    `Poin Belanja: ${formatRupiah(b)}<br><br>` +
     `<strong>Total Transaksi: ${formatRupiah(total)}</strong><br><br>` +
     'Simpan transaksi ini?'
   );
@@ -502,7 +551,7 @@ async function confirmInterestCustomMonths() {
 }
 
 async function confirmHitungSHU() {
-  const totalSHU = +document.getElementById('shuProfit').value || 0;
+  const totalSHU = getCurrencyValue('shuProfit');
   if (totalSHU <= 0) {
     await showCustomModal('Peringatan', 'Total SHU harus lebih dari 0!');
     return;
@@ -528,6 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('shuBulan').value = today.toISOString().slice(0, 7);
 
   loadFromStorage();
+  setupCurrencyInputs();
   renderTableAnggota();
   updateSelectAnggota();
   renderTableTransaksi();
@@ -573,11 +623,12 @@ function togglePreview() {
 }
 
 function resetTransactionInputs() {
-  document.getElementById('inputTambahWajib').value = 0;
-  document.getElementById('inputTambahSukarela').value = 0;
-  document.getElementById('inputBelanja').value = 0;
+  document.getElementById('inputTambahWajib').value = '0';
+  document.getElementById('inputTambahSukarela').value = '0';
+  document.getElementById('inputBelanja').value = '0';
   document.getElementById('selAnggota').value = '';
   document.getElementById('previewArea').innerHTML = 'Pilih anggota untuk melihat detail...';
+  setupCurrencyInputs();
 }
 
 // ===== TRIGGER SAVE =====
@@ -725,7 +776,7 @@ function downloadTemplateExcel() {
     ['📋 TRANSAKSI (WAJIB ADA)', '', '', '', '', '', '', '', ''],
     ['⚠️ SETIAP ANGGOTA HARUS PUNYA 1 BARIS "Pendaftaran Awal"', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', ''],
-    ['Tanggal', 'ID', 'Nama', 'Tambah Wajib', 'Tambah Sukarela', 'Bunga Sukarela', 'Sukarela Setelah', 'Belanja', 'Keterangan'],
+    ['Tanggal', 'ID', 'Nama', 'Tambah Wajib', 'Tambah Sukarela', 'Bunga Sukarela', 'Sukarela Setelah', 'Poin Belanja', 'Keterangan'],
     ['2024-01-01', 'A001', 'Budi Santoso', 50000, 0, 0, 0, 0, 'Pendaftaran Awal'],
     ['2024-02-01', 'A001', 'Budi Santoso', 50000, 100000, 0, 100000, 50000, 'Transaksi Rutin'],
     ['2024-01-01', 'A002', 'Siti Rahayu', 50000, 100000, 0, 100000, 0, 'Pendaftaran Awal']
@@ -740,9 +791,9 @@ async function tambahAnggota() {
   const tgl = document.getElementById('daftarTanggal').value;
   let id = document.getElementById('daftarId').value.trim();
   const nama = document.getElementById('daftarNama').value.trim();
-  const pokok = +document.getElementById('daftarPokok').value || 0;
-  const wajib = +document.getElementById('daftarWajib').value || 0;
-  const sukarela = +document.getElementById('daftarSukarela').value || 0;
+  const pokok = getCurrencyValue('daftarPokok');
+  const wajib = getCurrencyValue('daftarWajib');
+  const sukarela = getCurrencyValue('daftarSukarela');
 
   if (!tgl || !nama || pokok<=0 || wajib<=0) {
     await showCustomModal('Peringatan', 'Data tidak lengkap!<br>Pokok & Wajib minimal Rp 1.');
@@ -787,6 +838,10 @@ async function tambahAnggota() {
     triggerSave();
     document.getElementById('daftarId').value = '';
     document.getElementById('daftarNama').value = '';
+    document.getElementById('daftarPokok').value = '100000';
+    document.getElementById('daftarWajib').value = '50000';
+    document.getElementById('daftarSukarela').value = '0';
+    setupCurrencyInputs();
     await showCustomModal('Sukses', 'Anggota berhasil ditambahkan!');
   }
 }
@@ -814,19 +869,33 @@ function renderTableAnggota() {
 
 function editCell(i, field, cell) {
   const a = anggotaList[i];
-  const type = field==='tgl'?'date':field==='nama'?'text':'number';
-  const val = field==='tgl'?a[field]:field==='nama'?a[field]:a[field];
-  cell.innerHTML = `<input type="${type}" value="${val}" id="edit-${field}-${i}" ${type==='number'?'step="1000" min="0"':''}>`;
+  let value = a[field];
+  let type = 'text';
+  
+  if (field === 'tgl') {
+    type = 'date';
+  } else if (['pokok', 'wajib', 'sukarela', 'shu'].includes(field)) {
+    type = 'text';
+    value = value.toString();
+  } else {
+    type = 'text';
+  }
+  
+  cell.innerHTML = `<input type="${type}" value="${value}" id="edit-${field}-${i}" class="${type === 'text' && ['pokok','wajib','sukarela','shu'].includes(field) ? 'currency-input' : ''}">`;
+  
+  if (type === 'text' && ['pokok','wajib','sukarela','shu'].includes(field)) {
+    setTimeout(() => setupCurrencyInputs(), 10);
+  }
 }
 
 async function saveEdit(i) {
   const a = anggotaList[i];
   const tgl = document.getElementById(`edit-tgl-${i}`)?.value || a.tgl;
   const nama = document.getElementById(`edit-nama-${i}`)?.value?.trim() || a.nama;
-  const pokok = +document.getElementById(`edit-pokok-${i}`)?.value || a.pokok;
-  const wajib = +document.getElementById(`edit-wajib-${i}`)?.value || a.wajib;
-  const sukarela = +document.getElementById(`edit-sukarela-${i}`)?.value || a.sukarela;
-  const shu = +document.getElementById(`edit-shu-${i}`)?.value || a.shu;
+  const pokok = getCurrencyValue(`edit-pokok-${i}`);
+  const wajib = getCurrencyValue(`edit-wajib-${i}`);
+  const sukarela = getCurrencyValue(`edit-sukarela-${i}`);
+  const shu = getCurrencyValue(`edit-shu-${i}`);
 
   if (!nama || pokok<=0 || wajib<=0) {
     await showCustomModal('Peringatan', 'Data tidak valid!<br>Pokok & Wajib minimal Rp 1.');
@@ -899,9 +968,9 @@ function updatePreviewAnggota() {
 function prosesTransaksi() {
   const i = document.getElementById('selAnggota').value;
   const tgl = document.getElementById('trxTanggal').value;
-  const w = +document.getElementById('inputTambahWajib').value || 0;
-  const s = +document.getElementById('inputTambahSukarela').value || 0;
-  const b = +document.getElementById('inputBelanja').value || 0;
+  const w = getCurrencyValue('inputTambahWajib');
+  const s = getCurrencyValue('inputTambahSukarela');
+  const b = getCurrencyValue('inputBelanja');
 
   const a = anggotaList[i];
   let bunga = 0;
@@ -1021,27 +1090,28 @@ function renderTableInfoAnggota() {
     tbody.innerHTML += `<tr>
       <td>${a.lastInterestDate || a.tgl}</td>
       <td>${a.id}</td><td>${a.nama}</td>
-      <td><input type="number" id="info-tambahWajib-${i}" 
-           value="0" step="1000" min="0" placeholder="0"></td>
-      <td><input type="number" id="info-tambahSukarela-${i}" 
-           value="0" step="1000" min="0" placeholder="0"></td>
+      <td><input type="text" id="info-tambahWajib-${i}" 
+           value="0" class="currency-input" placeholder="0"></td>
+      <td><input type="text" id="info-tambahSukarela-${i}" 
+           value="0" class="currency-input" placeholder="0"></td>
       <td>-</td><td>${formatRupiah(a.sukarela)}</td>
-      <td><input type="number" id="info-belanja-${i}" 
-           value="0" step="1000" min="0" placeholder="0"></td>
+      <td><input type="text" id="info-belanja-${i}" 
+           value="0" class="currency-input" placeholder="0"></td>
       <td>
         <button class="btn-success" onclick="saveInfoAnggota(${i})">Simpan</button>
         <button class="btn-danger" onclick="deleteInfoAnggota(${i})">Hapus</button>
       </td>
     </tr>`;
   });
+  setupCurrencyInputs();
 }
 
 async function saveInfoAnggota(i) {
   const a = anggotaList[i];
   const tgl = document.getElementById('trxTanggal').value;
-  const w = +document.getElementById(`info-tambahWajib-${i}`).value || 0;
-  const s = +document.getElementById(`info-tambahSukarela-${i}`).value || 0;
-  const b = +document.getElementById(`info-belanja-${i}`).value || 0;
+  const w = getCurrencyValue(`info-tambahWajib-${i}`);
+  const s = getCurrencyValue(`info-tambahSukarela-${i}`);
+  const b = getCurrencyValue(`info-belanja-${i}`);
   
   if (!tgl || (w===0 && s===0 && b===0)) {
     await showCustomModal('Peringatan', 'Isi minimal satu transaksi!');
@@ -1054,7 +1124,7 @@ async function saveInfoAnggota(i) {
     `Tanggal: ${tgl}<br>` +
     `Tambah Wajib: ${formatRupiah(w)}<br>` +
     `Tambah Sukarela: ${formatRupiah(s)}<br>` +
-    `Belanja: ${formatRupiah(b)}<br><br>` +
+    `Poin Belanja: ${formatRupiah(b)}<br><br>` +
     'Simpan transaksi ini?'
   );
   
@@ -1074,9 +1144,10 @@ async function saveInfoAnggota(i) {
     triggerSave();
     
     // Reset input setelah simpan
-    document.getElementById(`info-tambahWajib-${i}`).value = 0;
-    document.getElementById(`info-tambahSukarela-${i}`).value = 0;
-    document.getElementById(`info-belanja-${i}`).value = 0;
+    document.getElementById(`info-tambahWajib-${i}`).value = '0';
+    document.getElementById(`info-tambahSukarela-${i}`).value = '0';
+    document.getElementById(`info-belanja-${i}`).value = '0';
+    setupCurrencyInputs();
     
     await showCustomModal('Sukses', 'Transaksi berhasil disimpan!');
   }
@@ -1115,7 +1186,7 @@ async function deleteInfoAnggota(i) {
 // ===== SHU =====
 function hitungSHU() {
   if (!anggotaList.length) return;
-  const totalSHU = +document.getElementById('shuProfit').value || 0;
+  const totalSHU = getCurrencyValue('shuProfit');
   if (totalSHU<=0) return;
 
   const p = {
@@ -1134,15 +1205,29 @@ function hitungSHU() {
   document.getElementById('totalPersen').innerHTML = `Total: ${sumP.toFixed(1)}% ${sumP===100?'':'(Harus 100%)'}`;
   if (Math.abs(sumP-100)>0.1) return;
 
+  // Hitung nominal per pos
   const shuModal = totalSHU * (p.modal/100);
-  const totalModal = anggotaList.reduce((s,a)=>s+a.pokok+a.wajib,0);
   const shuBelanja = totalSHU * (p.belanja/100);
+  const shuCadangan = totalSHU * (p.cadangan/100);
+  const shuPengurus = totalSHU * (p.pengurus/100);
+  const shuPengawas = totalSHU * (p.pengawas/100);
+  const shuKaryawan = totalSHU * (p.karyawan/100);
+  const shuSosial = totalSHU * (p.sosial/100);
+  const shuPendidikan = totalSHU * (p.pendidikan/100);
+  const shuDanaBangun = totalSHU * (p.danaBangun/100);
+
+  // Hitung SHU per anggota
+  const totalModal = anggotaList.reduce((s,a)=>s+a.pokok+a.wajib,0);
   const totalBelanja = transaksiList.reduce((s,t)=>s+t.belanja,0);
   const belanjaById = {}; 
   transaksiList.forEach(t=> { belanjaById[t.id]=(belanjaById[t.id]||0)+t.belanja; });
 
   const tbodySHU = document.querySelector('#tableSHU tbody'); 
   tbodySHU.innerHTML='';
+  
+  let totalSHUAnggota = 0;
+  let totalSHUModal = 0;
+  let totalSHUBelanja = 0;
   
   anggotaList.forEach(a=> {
     const modal = a.pokok + a.wajib;
@@ -1153,6 +1238,10 @@ function hitungSHU() {
     a.shu = total; 
     a.totalDana = a.pokok + a.wajib + a.sukarela;
 
+    totalSHUAnggota += total;
+    totalSHUModal += shuM;
+    totalSHUBelanja += shuB;
+
     tbodySHU.innerHTML += `<tr>
       <td>${a.id}</td><td>${a.nama}</td>
       <td>${formatRupiah(modal)}</td><td>${formatRupiah(belanja)}</td>
@@ -1161,17 +1250,36 @@ function hitungSHU() {
     </tr>`;
   });
 
+  // Tambah summary row
+  tbodySHU.innerHTML += `<tr>
+    <td colspan="3" style="text-align:right; border:none; background:#f5f5f5;"></td>
+    <td style="border:none; background:#f5f5f5;"></td>
+    <td style="border:none; background:#f5f5f5;"><strong>${formatRupiah(totalSHUModal)}</strong></td>
+    <td style="border:none; background:#f5f5f5;"><strong>${formatRupiah(totalSHUBelanja)}</strong></td>
+    <td style="border:none; background:#f5f5f5;"><strong>${formatRupiah(totalSHUAnggota)}</strong></td>
+  </tr>`;
+
+  // Tampilkan semua pos SHU
   const tbodyPos = document.querySelector('#tableSHUPos tbody'); 
   tbodyPos.innerHTML='';
   
-  ['Cadangan','Pengurus','Pengawas','Karyawan','Sosial','Pendidikan','Dana Pembangunan'].forEach((n,i)=> {
-    const key = n.toLowerCase().replace(/ /g,''); 
-    if(!p[key]) return;
-    const nom = totalSHU * (p[key]/100);
+  const posList = [
+    {nama: 'Modal/Simpanan', nilai: shuModal, persen: p.modal},
+    {nama: 'Poin Belanja', nilai: shuBelanja, persen: p.belanja},
+    {nama: 'Cadangan', nilai: shuCadangan, persen: p.cadangan},
+    {nama: 'Pengurus', nilai: shuPengurus, persen: p.pengurus},
+    {nama: 'Pengawas', nilai: shuPengawas, persen: p.pengawas},
+    {nama: 'Karyawan', nilai: shuKaryawan, persen: p.karyawan},
+    {nama: 'Sosial', nilai: shuSosial, persen: p.sosial},
+    {nama: 'Pendidikan', nilai: shuPendidikan, persen: p.pendidikan},
+    {nama: 'Dana Pembangunan', nilai: shuDanaBangun, persen: p.danaBangun}
+  ];
+  
+  posList.forEach(pos => {
     tbodyPos.innerHTML += `<tr>
-      <td>${n}</td>
-      <td>${p[key]}%</td>
-      <td>${formatRupiah(nom)}</td>
+      <td>${pos.nama}</td>
+      <td>${pos.persen}%</td>
+      <td>${formatRupiah(pos.nilai)}</td>
     </tr>`;
   });
 
@@ -1198,7 +1306,7 @@ function exportToExcel() {
     'Tanggal':t.tgl, 'ID':t.id, 'Nama':t.nama,
     'Tambah Wajib':t.tambahWajib, 'Tambah Sukarela':t.tambahSukarela,
     'Bunga Sukarela':t.bunga, 'Sukarela Setelah':t.sukarelaSetelah,
-    'Belanja':t.belanja, 'Keterangan':t.keterangan
+    'Poin Belanja':t.belanja, 'Keterangan':t.keterangan
   })));
   XLSX.utils.book_append_sheet(wb, wsT, 'Riwayat Transaksi');
 
@@ -1213,35 +1321,94 @@ function exportSHUToExcel() {
   const bln = document.getElementById('shuBulan').value;
   const txt = per==='bulanan'?`Bulanan ${new Date(bln).toLocaleString('id-ID',{month:'long',year:'numeric'})}`:`Tahunan ${bln}`;
 
-  // SHU Anggota
-  const shuRows = Array.from(document.querySelector('#tableSHU tbody').children).map(r=>({
-    'ID':r.cells[0].textContent, 
-    'Nama':r.cells[1].textContent,
-    'Total Modal':+r.cells[2].textContent.replace(/[^\d]/g,''),
-    'Total Belanja':+r.cells[3].textContent.replace(/[^\d]/g,''),
-    'SHU dari Modal':+r.cells[4].textContent.replace(/[^\d]/g,''),
-    'SHU dari Belanja':+r.cells[5].textContent.replace(/[^\d]/g,''),
-    'Total SHU':+r.cells[6].textContent.replace(/[^\d]/g,'')
-  }));
+  // Sheet 1: SHU Per Anggota
+  const shuRows = [];
+  let totalSHUModal = 0;
+  let totalSHUBelanja = 0;
+  let totalSHUAnggota = 0;
   
-  if (shuRows.length) {
-    shuRows.unshift({'ID':`Periode: ${txt}`});
-    const ws = XLSX.utils.json_to_sheet(shuRows);
-    XLSX.utils.book_append_sheet(wb, ws, 'SHU Anggota');
-  }
+  anggotaList.forEach(a => {
+    const modal = a.pokok + a.wajib;
+    const belanja = transaksiList.filter(t => t.id === a.id).reduce((sum, t) => sum + t.belanja, 0);
+    const shuM = a.shu * 0.8; // Asumsi 80% dari total SHU adalah modal (adjust sesuai kebutuhan)
+    const shuB = a.shu * 0.2; // Asumsi 20% dari total SHU adalah belanja
+    const total = shuM + shuB;
+    
+    totalSHUModal += shuM;
+    totalSHUBelanja += shuB;
+    totalSHUAnggota += total;
+    
+    shuRows.push({
+      'ID': a.id,
+      'Nama': a.nama,
+      'Total Modal (Pokok+Wajib)': modal,
+      'Total Poin Belanja': belanja,
+      'SHU dari Modal': shuM,
+      'SHU dari Poin Belanja': shuB,
+      'Total SHU Diterima': total
+    });
+  });
+  
+  // Add summary rows with empty columns for spacing
+  shuRows.push({});
+  shuRows.push({
+    'ID': 'TOTAL SHU MODAL:',
+    'Nama': '',
+    'Total Modal (Pokok+Wajib)': '',
+    'Total Poin Belanja': '',
+    'SHU dari Modal': totalSHUModal
+  });
+  shuRows.push({
+    'ID': 'TOTAL SHU POIN BELANJA:',
+    'Nama': '',
+    'Total Modal (Pokok+Wajib)': '',
+    'Total Poin Belanja': '',
+    'SHU dari Modal': '',
+    'SHU dari Poin Belanja': totalSHUBelanja
+  });
+  shuRows.push({
+    'ID': 'GRAND TOTAL SHU ANGGOTA:',
+    'Nama': '',
+    'Total Modal (Pokok+Wajib)': '',
+    'Total Poin Belanja': '',
+    'SHU dari Modal': '',
+    'SHU dari Poin Belanja': '',
+    'Total SHU Diterima': totalSHUAnggota
+  });
+  
+  const wsSHU = XLSX.utils.json_to_sheet(shuRows);
+  XLSX.utils.book_append_sheet(wb, wsSHU, 'SHU Per Anggota');
 
-  // SHU Pos Lain
-  const posRows = Array.from(document.querySelector('#tableSHUPos tbody').children).map(r=>({
-    'Pos':r.cells[0].textContent, 
-    'Persentase':+r.cells[1].textContent.replace('%',''),
-    'Nominal':+r.cells[2].textContent.replace(/[^\d]/g,'')
-  }));
+  // Sheet 2: Alokasi SHU Lengkap
+  const totalSHU = getCurrencyValue('shuProfit');
+  const p = {
+    modal: +document.getElementById('persModal').value || 0,
+    belanja: +document.getElementById('persBelanja').value || 0,
+    cadangan: +document.getElementById('persCadangan').value || 0,
+    pengurus: +document.getElementById('persPengurus').value || 0,
+    pengawas: +document.getElementById('persPengawas').value || 0,
+    karyawan: +document.getElementById('persKaryawan').value || 0,
+    sosial: +document.getElementById('persSosial').value || 0,
+    pendidikan: +document.getElementById('persPendidikan').value || 0,
+    danaBangun: +document.getElementById('persDanaBangun').value || 0
+  };
   
-  if (posRows.length) {
-    posRows.unshift({'Pos':`Periode: ${txt}`});
-    const ws = XLSX.utils.json_to_sheet(posRows);
-    XLSX.utils.book_append_sheet(wb, ws, 'SHU Pos Lain');
-  }
+  const posRows = [
+    { 'Pos SHU': 'Modal/Simpanan', 'Persentase': `${p.modal}%`, 'Nominal (Rp)': totalSHU * (p.modal/100) },
+    { 'Pos SHU': 'Poin Belanja', 'Persentase': `${p.belanja}%`, 'Nominal (Rp)': totalSHU * (p.belanja/100) },
+    { 'Pos SHU': 'Cadangan', 'Persentase': `${p.cadangan}%`, 'Nominal (Rp)': totalSHU * (p.cadangan/100) },
+    { 'Pos SHU': 'Pengurus', 'Persentase': `${p.pengurus}%`, 'Nominal (Rp)': totalSHU * (p.pengurus/100) },
+    { 'Pos SHU': 'Pengawas', 'Persentase': `${p.pengawas}%`, 'Nominal (Rp)': totalSHU * (p.pengawas/100) },
+    { 'Pos SHU': 'Karyawan', 'Persentase': `${p.karyawan}%`, 'Nominal (Rp)': totalSHU * (p.karyawan/100) },
+    { 'Pos SHU': 'Sosial', 'Persentase': `${p.sosial}%`, 'Nominal (Rp)': totalSHU * (p.sosial/100) },
+    { 'Pos SHU': 'Pendidikan', 'Persentase': `${p.pendidikan}%`, 'Nominal (Rp)': totalSHU * (p.pendidikan/100) },
+    { 'Pos SHU': 'Dana Pembangunan', 'Persentase': `${p.danaBangun}%`, 'Nominal (Rp)': totalSHU * (p.danaBangun/100) },
+    {},
+    { 'Pos SHU': 'TOTAL', 'Persentase': '100%', 'Nominal (Rp)': totalSHU }
+  ];
+  
+  const wsPos = XLSX.utils.json_to_sheet(posRows);
+  XLSX.utils.book_append_sheet(wb, wsPos, 'Alokasi SHU Lengkap');
 
   XLSX.writeFile(wb, `Laporan_SHU_${per}_${bln}.xlsx`);
 }
@@ -1263,10 +1430,10 @@ async function saveAllAnggota() {
     if (inputs.some(inp => inp)) {
       const tgl = inputs[0]?.value || a.tgl;
       const nama = inputs[1]?.value?.trim() || a.nama;
-      const pokok = +inputs[2]?.value || a.pokok;
-      const wajib = +inputs[3]?.value || a.wajib;
-      const sukarela = +inputs[4]?.value || a.sukarela;
-      const shu = +inputs[5]?.value || a.shu;
+      const pokok = getCurrencyValue(`edit-pokok-${i}`);
+      const wajib = getCurrencyValue(`edit-wajib-${i}`);
+      const sukarela = getCurrencyValue(`edit-sukarela-${i}`);
+      const shu = getCurrencyValue(`edit-shu-${i}`);
 
       if (nama && pokok > 0 && wajib > 0) {
         a.tgl = tgl; a.nama = nama; a.pokok = pokok; 
@@ -1295,9 +1462,9 @@ async function saveAllInfoAnggota() {
 
   let savedCount = 0;
   anggotaList.forEach((a, i) => {
-    const w = +document.getElementById(`info-tambahWajib-${i}`)?.value || 0;
-    const s = +document.getElementById(`info-tambahSukarela-${i}`)?.value || 0;
-    const b = +document.getElementById(`info-belanja-${i}`)?.value || 0;
+    const w = getCurrencyValue(`info-tambahWajib-${i}`);
+    const s = getCurrencyValue(`info-tambahSukarela-${i}`);
+    const b = getCurrencyValue(`info-belanja-${i}`);
 
     if (w > 0 || s > 0 || b > 0) {
       a.wajib += w;
@@ -1306,7 +1473,7 @@ async function saveAllInfoAnggota() {
       a.lastInterestDate = tgl;
 
       transaksiList.push({
-        tgl, id: a.id, nama: a.nama,
+        tgl, id: a.id, nama: a.name,
         tambahWajib: w, tambahSukarela: s,
         bunga: 0, sukarelaSetelah: a.sukarela,
         belanja: b, keterangan: 'Info Anggota (Batch)'
@@ -1314,14 +1481,15 @@ async function saveAllInfoAnggota() {
       savedCount++;
       
       // Reset input
-      document.getElementById(`info-tambahWajib-${i}`).value = 0;
-      document.getElementById(`info-tambahSukarela-${i}`).value = 0;
-      document.getElementById(`info-belanja-${i}`).value = 0;
+      document.getElementById(`info-tambahWajib-${i}`).value = '0';
+      document.getElementById(`info-tambahSukarela-${i}`).value = '0';
+      document.getElementById(`info-belanja-${i}`).value = '0';
     }
   });
 
   if (savedCount > 0) {
     triggerSave();
+    setupCurrencyInputs();
     await showCustomModal(
       'Sukses', 
       `Berhasil menyimpan ${savedCount} transaksi dari Info Anggota!`
