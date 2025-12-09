@@ -1339,32 +1339,27 @@ function exportToExcel() {
   
   const wb = XLSX.utils.book_new();
   const today = new Date().toISOString().slice(0,10);
-  
-  // Sheet 2: Data Anggota
+
+  // Sheet 1: Data Anggota
   const wsA = XLSX.utils.json_to_sheet(anggotaList.map(a => ({
     'Tanggal': a.tgl,
     'ID': a.id,
     'Nama': a.nama,
-    'Simpanan Pokok': a.pokok,      // 100000 (NUMBER)
-    'Simpanan Wajib': a.wajib,      // 50000 (NUMBER)
-    'Simpanan Sukarela': a.sukarela, // 0 (NUMBER)
-    'SHU': a.shu,                   // 0 (NUMBER)
-    'Total Dana': bulatkan(a.totalDana + a.shu)  // NUMBER
+    'Simpanan Pokok': a.pokok,
+    'Simpanan Wajib': a.wajib,
+    'Simpanan Sukarela': a.sukarela,
+    'SHU': a.shu,
+    'Total Dana': bulatkan(a.totalDana + a.shu)
   })));
   
   // Set column widths
   wsA['!cols'] = [
-    {wch: 12}, // Tanggal
-    {wch: 10}, // ID
-    {wch: 25}, // Nama
-    {wch: 15}, // Pokok
-    {wch: 15}, // Wajib
-    {wch: 15}, // Sukarela
-    {wch: 15}, // SHU
-    {wch: 15}  // Total Dana
+    {wch: 12}, {wch: 10}, {wch: 25}, 
+    {wch: 15}, {wch: 15}, {wch: 15}, 
+    {wch: 15}, {wch: 15}
   ];
   
-  // Sheet 3: Riwayat Transaksi
+  // Sheet 2: Riwayat Transaksi
   const wsT = XLSX.utils.json_to_sheet([...transaksiList].reverse().map(t => ({
     'Tanggal': t.tgl,
     'ID': t.id,
@@ -1383,7 +1378,7 @@ function exportToExcel() {
     {wch: 15}, {wch: 15}, {wch: 25}
   ];
   
-  // Tambahkan semua sheet
+  // Tambahkan sheet ke workbook
   XLSX.utils.book_append_sheet(wb, wsA, 'Data Anggota');
   XLSX.utils.book_append_sheet(wb, wsT, 'Riwayat Transaksi');
   
@@ -1405,8 +1400,8 @@ function exportSHUToExcel() {
   } else {
     periodeStr = `Tahunan ${bln}`;
   }
-
-  // Sheet 2: SHU Per Anggota
+  
+  // Sheet 1: SHU Per Anggota
   const totalSHU = getCurrencyValue('shuProfit');
   const p = {
     modal: +document.getElementById('persModal').value || 0,
@@ -1465,7 +1460,7 @@ function exportSHUToExcel() {
     {wch: 15}, {wch: 20}, {wch: 20}
   ];
   
-  // Sheet 3: Alokasi SHU
+  // Sheet 2: Alokasi SHU
   const posData = [];
   posData.push(['SHU PERIODE:', periodeStr]);
   posData.push([]);
@@ -1493,8 +1488,7 @@ function exportSHUToExcel() {
   const wsPos = XLSX.utils.aoa_to_sheet(posData);
   wsPos['!cols'] = [{wch: 25}, {wch: 15}, {wch: 20}];
   
-  // Tambahkan semua sheet
-  XLSX.utils.book_append_sheet(wb, wsInstruksi, 'PETUNJUK');
+  // Tambahkan sheet ke workbook
   XLSX.utils.book_append_sheet(wb, wsSHU, 'SHU Per Anggota');
   XLSX.utils.book_append_sheet(wb, wsPos, 'Alokasi SHU');
   
