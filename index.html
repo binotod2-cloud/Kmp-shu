@@ -247,8 +247,7 @@ button:hover { background:#0b7dda; }
   <thead><tr>
     <th>Tanggal</th><th>ID</th><th>Nama</th>
     <th>Tambah Wajib</th><th>Tambah Sukarela</th>
-    <th>Bunga Sukarela</th>
-    <th>Sukarela Setelah</th>
+    <th>Bunga Sukarela</th><th>Sukarela Setelah</th>
     <th>Poin Belanja</th>
   </tr></thead>
   <tbody></tbody>
@@ -323,9 +322,22 @@ button:hover { background:#0b7dda; }
 </div>
 
 <script>
-// ===== FUNGSI PEMBULATAN =====
+// ===== FUNGSI PEMBULATAN YANG BENAR =====
 function bulatkan(num) {
-  return Math.round(parseFloat(num) || 0);
+  // Parse dulu ke number
+  const parsed = parseFloat(num) || 0;
+  
+  // Untuk keuangan koperasi: BULATKAN KE RUPIAH TERDEKAT
+  // Tapi biasanya untuk SHU, kita ingin RUPIAH PENUH (tanpa sen)
+  // Jadi kita bulatkan ke bilangan bulat terdekat
+  return Math.round(parsed);
+}
+
+// PERBAIKAN: Fungsi untuk menghapus desimal (jika ingin RUPIAH PENUH tanpa pembulatan)
+function rupiahPenuh(num) {
+  const parsed = parseFloat(num) || 0;
+  // Hapus angka desimal (truncate)
+  return Math.trunc(parsed);
 }
 
 // ===== CUSTOM MODAL SYSTEM =====
@@ -367,7 +379,7 @@ function formatRupiah(angka) {
 function parseCurrency(value) {
   if (!value && value !== 0) return 0;
   const num = parseInt(value.toString().replace(/[^\d]/g, '')) || 0;
-  return bulatkan(num); // Bulatkan hasil parse
+  return num; // JANGAN bulatkan di sini, biar number murni
 }
 
 function setupCurrencyInputs() {
@@ -1359,14 +1371,33 @@ function exportSHUToExcel() {
   const p = {
     modal: +document.getElementById('persModal').value || 0,
     belanja: +document.getElementById('persBelanja').value || 0,
+    cadangan: +document.getElementById('persCadangan').value || 0,
+    pengurus: +document.getElementById('persPengurus').value || 0,
+    pengawas: +document.getElementById('persPengawas').value || 0,
+    karyawan: +document.getElementById('persKaryawan').value || 0,
+    sosial: +document.getElementById('persSosial').value || 0,
+    pendidikan: +document.getElementById('persPendidikan').value || 0,
+    danaBangun: +document.getElementById('persDanaBangun').value || 0
   };
   
-  const shuModal = bulatkan(totalSHU * (p.modal/100));
-  const shuBelanja = bulatkan(totalSHU * (p.belanja/100));
-  const totalModal = anggotaList.reduce((s,a)=>s+a.pokok+a.wajib,0);
-  const totalBelanja = transaksiList.reduce((s,t)=>s+t.belanja,0);
-  const belanjaById = {}; 
-  transaksiList.forEach(t=> { belanjaById[t.id]=(belanjaById[t.id]||0)+t.belanja; });
+  // PERBAIKAN: Untuk SHU, biasanya RUPIAH PENUH (tanpa sen)
+  // Jadi kita pakai Math.trunc() atau Math.floor() untuk menghapus desimal
+  const shuModal = Math.trunc(totalSHU * (p.modal / 100));
+  const shuBelanja = Math.trunc(totalSHU * (p.belanja / 100));
+  const shuCadangan = Math.trunc(totalSHU * (p.cadangan / 100));
+  const shuPengurus = Math.trunc(totalSHU * (p.pengurus / 100));
+  const shuPengawas = Math.trunc(totalSHU * (p.pengawas / 100));
+  const shuKaryawan = Math.trunc(totalSHU * (p.karyawan / 100));
+  const shuSosial = Math.trunc(totalSHU * (p.sosial / 100));
+  const shuPendidikan = Math.trunc(totalSHU * (p.pendidikan / 100));
+  const shuDanaBangun = Math.trunc(totalSHU * (p.danaBangun / 100));
+  
+  const totalModal = anggotaList.reduce((s, a) => s + a.pokok + a.wajib, 0);
+  const totalBelanja = transaksiList.reduce((s, t) => s + t.belanja, 0);
+  const belanjaById = {};
+  transaksiList.forEach(t => {
+    belanjaById[t.id] = (belanjaById[t.id] || 0) + t.belanja;
+  });
   
   const shuData = [];
   
@@ -1376,12 +1407,12 @@ function exportSHUToExcel() {
   
   // Header: Kolom
   shuData.push([
-    'ID', 
-    'Nama', 
-    'Total Modal (Pokok+Wajib)', 
-    'Total Poin Belanja', 
-    'SHU dari Modal', 
-    'SHU dari Poin Belanja', 
+    'ID',
+    'Nama',
+    'Total Modal (Pokok+Wajib)',
+    'Total Poin Belanja',
+    'SHU dari Modal',
+    'SHU dari Poin Belanja',
     'Total SHU Diterima'
   ]);
   
@@ -1389,61 +1420,62 @@ function exportSHUToExcel() {
   let totalSHUModal = 0;
   let totalSHUBelanja = 0;
   
-  // Data anggota
+  // Data anggota - Pakai Math.trunc() untuk SHU (RUPIAH PENUH)
   anggotaList.forEach(a => {
     const modal = a.pokok + a.wajib;
-    const shuM = totalModal>0 ? bulatkan((modal/totalModal)*shuModal) : 0;
-    const belanja = belanjaById[a.id]||0;
-    const shuB = (totalBelanja>0 && belanja>0) ? bulatkan((belanja/totalBelanja)*shuBelanja) : 0;
-    const total = bulatkan(shuM + shuB);
+    const shuM = totalModal > 0 ? Math.trunc((modal / totalModal) * shuModal) : 0;
+    const belanja = belanjaById[a.id] || 0;
+    const shuB = (totalBelanja > 0 && belanja > 0) ? Math.trunc((belanja / totalBelanja) * shuBelanja) : 0;
+    const total = Math.trunc(shuM + shuB);
     
     totalSHUModal += shuM;
     totalSHUBelanja += shuB;
     totalSHUAnggota += total;
     
+    // Export sebagai NUMBER murni
     shuData.push([
       a.id,
       a.nama,
-      modal,
-      belanja,
-      shuM,
-      shuB,
-      total
+      modal,           // NUMBER
+      belanja,         // NUMBER
+      shuM,            // NUMBER (RUPIAH PENUH)
+      shuB,            // NUMBER (RUPIAH PENUH)
+      total            // NUMBER (RUPIAH PENUH)
     ]);
   });
   
   // Baris kosong sebelum summary
   shuData.push([]);
   
-  // Summary RATA DI BAWAH (semua di kolom G)
+  // Summary - juga sebagai NUMBER
   shuData.push([
-    'TOTAL SHU MODAL:', 
-    '', 
-    '', 
-    '', 
-    '', 
-    '', 
-    totalSHUModal  // Rata di kolom G
+    'TOTAL SHU MODAL',
+    '',
+    '',
+    '',
+    '',
+    '',
+    totalSHUModal     // NUMBER
   ]);
   
   shuData.push([
-    'TOTAL SHU POIN BELANJA:', 
-    '', 
-    '', 
-    '', 
-    '', 
-    '', 
-    totalSHUBelanja // Rata di kolom G
+    'TOTAL SHU POIN BELANJA',
+    '',
+    '',
+    '',
+    '',
+    '',
+    totalSHUBelanja   // NUMBER
   ]);
   
   shuData.push([
-    'GRAND TOTAL SHU ANGGOTA:', 
-    '', 
-    '', 
-    '', 
-    '', 
-    '', 
-    totalSHUAnggota  // Rata di kolom G
+    'GRAND TOTAL SHU ANGGOTA',
+    '',
+    '',
+    '',
+    '',
+    '',
+    totalSHUAnggota   // NUMBER
   ]);
   
   const wsSHU = XLSX.utils.aoa_to_sheet(shuData);
@@ -1472,28 +1504,28 @@ function exportSHUToExcel() {
   // Header: Kolom
   posData.push(['Pos SHU', 'Persentase', 'Nominal (Rp)']);
   
-  // Data semua pos
+  // Data semua pos - sebagai NUMBER (RUPIAH PENUH)
   const posList = [
     {nama: 'Modal/Simpanan', persen: p.modal, nilai: shuModal},
     {nama: 'Poin Belanja', persen: p.belanja, nilai: shuBelanja},
-    {nama: 'Cadangan', persen: +document.getElementById('persCadangan').value, nilai: bulatkan(totalSHU * (+document.getElementById('persCadangan').value/100))},
-    {nama: 'Pengurus', persen: +document.getElementById('persPengurus').value, nilai: bulatkan(totalSHU * (+document.getElementById('persPengurus').value/100))},
-    {nama: 'Pengawas', persen: +document.getElementById('persPengawas').value, nilai: bulatkan(totalSHU * (+document.getElementById('persPengawas').value/100))},
-    {nama: 'Karyawan', persen: +document.getElementById('persKaryawan').value, nilai: bulatkan(totalSHU * (+document.getElementById('persKaryawan').value/100))},
-    {nama: 'Sosial', persen: +document.getElementById('persSosial').value, nilai: bulatkan(totalSHU * (+document.getElementById('persSosial').value/100))},
-    {nama: 'Pendidikan', persen: +document.getElementById('persPendidikan').value, nilai: bulatkan(totalSHU * (+document.getElementById('persPendidikan').value/100))},
-    {nama: 'Dana Pembangunan', persen: +document.getElementById('persDanaBangun').value, nilai: bulatkan(totalSHU * (+document.getElementById('persDanaBangun').value/100))}
+    {nama: 'Cadangan', persen: p.cadangan, nilai: shuCadangan},
+    {nama: 'Pengurus', persen: p.pengurus, nilai: shuPengurus},
+    {nama: 'Pengawas', persen: p.pengawas, nilai: shuPengawas},
+    {nama: 'Karyawan', persen: p.karyawan, nilai: shuKaryawan},
+    {nama: 'Sosial', persen: p.sosial, nilai: shuSosial},
+    {nama: 'Pendidikan', persen: p.pendidikan, nilai: shuPendidikan},
+    {nama: 'Dana Pembangunan', persen: p.danaBangun, nilai: shuDanaBangun}
   ];
   
   posList.forEach(pos => {
-    posData.push([pos.nama, `${pos.persen}%`, pos.nilai]);
+    posData.push([pos.nama, `${pos.persen}%`, pos.nilai]); // NUMBER untuk nilai
   });
   
   // Baris kosong
   posData.push([]);
   
   // Total
-  posData.push(['TOTAL', '100%', totalSHU]);
+  posData.push(['TOTAL', '100%', totalSHU]); // NUMBER untuk total
   
   const wsPos = XLSX.utils.aoa_to_sheet(posData);
   
@@ -1513,8 +1545,16 @@ function exportSHUToExcel() {
   anggotaData.push(['Tanggal', 'ID', 'Nama', 'Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela', 'SHU', 'Total Dana']);
   
   anggotaList.forEach(a => {
+    // Export semua angka sebagai NUMBER murni
     anggotaData.push([
-      a.tgl, a.id, a.nama, a.pokok, a.wajib, a.sukarela, a.shu, bulatkan(a.totalDana + a.shu)
+      a.tgl,
+      a.id,
+      a.nama,
+      a.pokok,          // NUMBER
+      a.wajib,          // NUMBER
+      a.sukarela,       // NUMBER
+      a.shu,            // NUMBER (SHU sudah bulat)
+      bulatkan(a.totalDana + a.shu)  // NUMBER
     ]);
   });
   
@@ -1531,8 +1571,17 @@ function exportSHUToExcel() {
   transaksiData.push(['Tanggal', 'ID', 'Nama', 'Tambah Wajib', 'Tambah Sukarela', 'Bunga Sukarela', 'Sukarela Setelah', 'Poin Belanja', 'Keterangan']);
   
   [...transaksiList].reverse().forEach(t => {
+    // Export semua angka sebagai NUMBER murni
     transaksiData.push([
-      t.tgl, t.id, t.nama, t.tambahWajib, t.tambahSukarela, t.bunga, t.sukarelaSetelah, t.belanja, t.keterangan
+      t.tgl,
+      t.id,
+      t.nama,
+      t.tambahWajib,      // NUMBER
+      t.tambahSukarela,   // NUMBER
+      t.bunga,            // NUMBER
+      t.sukarelaSetelah,  // NUMBER
+      t.belanja,          // NUMBER
+      t.keterangan
     ]);
   });
   
@@ -1543,8 +1592,8 @@ function exportSHUToExcel() {
   XLSX.utils.book_append_sheet(wb, wsTransaksi, 'Riwayat Transaksi');
 
   // Save file
-  const fileName = per === 'bulanan' ? 
-    `Laporan_SHU_Bulan_${new Date(bln).toLocaleString('id-ID',{month:'long',year:'numeric'}).replace(' ','_')}.xlsx` :
+  const fileName = per === 'bulanan' ?
+    `Laporan_SHU_Bulan_${new Date(bln).toLocaleString('id-ID', {month: 'long', year: 'numeric'}).replace(' ', '_')}.xlsx` :
     `Laporan_SHU_Tahun_${bln}.xlsx`;
   
   XLSX.writeFile(wb, fileName);
@@ -1573,13 +1622,13 @@ async function saveAllAnggota() {
       const shu = getCurrencyValue(`edit-shu-${i}`);
 
       if (nama && pokok > 0 && wajib > 0) {
-        a.tgl = tgl; 
-        a.nama = nama; 
-        a.pokok = bulatkan(pokok); 
-        a.wajib = bulatkan(wajib); 
-        a.sukarela = bulatkan(sukarela); 
+        a.tgl = tgl;
+        a.nama = nama;
+        a.pokok = bulatkan(pokok);
+        a.wajib = bulatkan(wajib);
+        a.sukarela = bulatkan(sukarela);
         a.shu = bulatkan(shu);
-        a.totalDana = bulatkan(pokok + wajib + sukarela); 
+        a.totalDana = bulatkan(pokok + wajib + sukarela);
         a.lastInterestDate = tgl;
         changed = true;
       }
@@ -1614,14 +1663,14 @@ async function saveAllInfoAnggota() {
       a.lastInterestDate = tgl;
 
       transaksiList.push({
-        tgl, 
-        id: a.id, 
+        tgl,
+        id: a.id,
         nama: a.nama,
-        tambahWajib: bulatkan(w), 
+        tambahWajib: bulatkan(w),
         tambahSukarela: bulatkan(s),
-        bunga: 0, 
+        bunga: 0,
         sukarelaSetelah: bulatkan(a.sukarela),
-        belanja: bulatkan(b), 
+        belanja: bulatkan(b),
         keterangan: 'Info Anggota (Batch)'
       });
       savedCount++;
@@ -1637,7 +1686,7 @@ async function saveAllInfoAnggota() {
     triggerSave();
     setupCurrencyInputs();
     await showCustomModal(
-      'Sukses', 
+      'Sukses',
       `Berhasil menyimpan ${savedCount} transaksi dari Info Anggota!`
     );
   } else {
