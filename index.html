@@ -1339,26 +1339,6 @@ function exportToExcel() {
   
   const wb = XLSX.utils.book_new();
   const today = new Date().toISOString().slice(0,10);
-
-  // Sheet 1: PETUNJUK FORMAT
-  const wsInstruksi = XLSX.utils.aoa_to_sheet([
-    ['PETUNJUK FORMAT ANGKA DI EXCEL'],
-    [''],
-    ['Langkah-langkah untuk menampilkan angka dengan titik ribuan:'],
-    ['1. Pilih semua cell angka (kolom D sampai H)'],
-    ['2. Klik kanan → Format Cells'],
-    ['3. Pilih tab "Number"'],
-    ['4. Decimal places: 0'],
-    ['5. Centang "Use 1000 Separator (.)"'],
-    ['6. Klik OK'],
-    [''],
-    ['Maka: 100000 akan tampil sebagai 100.000'],
-    [''],
-    ['CATATAN:'],
-    ['- Data disimpan sebagai ANGKA (bukan teks)'],
-    ['- Bisa dikalkulasi (SUM, AVERAGE, dll)'],
-    ['- Bisa sorting angka dengan benar']
-  ]);
   
   // Sheet 2: Data Anggota
   const wsA = XLSX.utils.json_to_sheet(anggotaList.map(a => ({
@@ -1404,7 +1384,6 @@ function exportToExcel() {
   ];
   
   // Tambahkan semua sheet
-  XLSX.utils.book_append_sheet(wb, wsInstruksi, 'PETUNJUK');
   XLSX.utils.book_append_sheet(wb, wsA, 'Data Anggota');
   XLSX.utils.book_append_sheet(wb, wsT, 'Riwayat Transaksi');
   
@@ -1426,22 +1405,7 @@ function exportSHUToExcel() {
   } else {
     periodeStr = `Tahunan ${bln}`;
   }
-  
-  // Sheet 1: PETUNJUK
-  const wsInstruksi = XLSX.utils.aoa_to_sheet([
-    ['PETUNJUK FORMAT ANGKA DI EXCEL'],
-    [''],
-    ['Langkah-langkah:'],
-    ['1. Pilih semua cell angka'],
-    ['2. Klik kanan → Format Cells'],
-    ['3. Pilih tab "Number"'],
-    ['4. Decimal places: 0'],
-    ['5. Centang "Use 1000 Separator (.)"'],
-    ['6. Klik OK'],
-    [''],
-    ['Periode SHU:', periodeStr]
-  ]);
-  
+
   // Sheet 2: SHU Per Anggota
   const totalSHU = getCurrencyValue('shuProfit');
   const p = {
